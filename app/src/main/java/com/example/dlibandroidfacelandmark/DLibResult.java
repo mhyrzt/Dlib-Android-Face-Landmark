@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class DLibResult {
     private ArrayList<Face> faces;
     private long count;
-
+    static { System.loadLibrary("dlib_face_result");}
     DLibResult() {
         faces = new ArrayList<Face>();
         count = 0;
@@ -24,4 +24,6 @@ public class DLibResult {
     public long getCount() {
         return this.count;
     }
+
+    public native void test();
 }

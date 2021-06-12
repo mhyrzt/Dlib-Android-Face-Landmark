@@ -47,3 +47,9 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
+add_library(
+        dlib_face_result
+        SHARED
+        dlib_face_result.cpp
+)
+target_link_libraries(dlib_face_result dlib_utils)

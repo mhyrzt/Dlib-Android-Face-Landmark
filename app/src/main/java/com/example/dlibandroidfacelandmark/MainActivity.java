@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         startCamera();
+        DLibResult ds = new DLibResult();
     }
 
     /**
