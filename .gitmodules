@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/dlib_android"]
+	path = app/src/main/cpp/dlib_android
+	url = https://github.com/mhyrzt/dlib_android
