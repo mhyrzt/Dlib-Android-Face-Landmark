@@ -3,9 +3,13 @@ package com.example.dlibandroidfacelandmark;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.dlibandroidfacelandmark.databinding.ActivityMainBinding;
+import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.controls.Facing;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
+    private CameraView camera;
+    private boolean facing = true;
+    private Button facingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        startCamera();
 
-        // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
     }
 
     /**
@@ -33,4 +38,25 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    private void startCamera() {
+        camera = (CameraView) findViewById(R.id.camera);
+        camera.setLifecycleOwner(this);
+        facingButtonClickListener();
+    }
+
+    private void facingButtonClickListener() {
+        facingButton = (Button) findViewById(R.id.cameraChange);
+        facingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeFacing();
+            }
+        });
+    }
+
+    private void changeFacing() {
+        camera.setFacing(facing ? Facing.FRONT : Facing.BACK);
+        facing = !facing;
+    }
 }
