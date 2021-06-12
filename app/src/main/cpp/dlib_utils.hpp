@@ -12,7 +12,7 @@ namespace myu {
     dlib::shape_predictor sp;
     void setShapePredictor(std::string);
     void convertBytes(dlib::array2d<dlib::rgb_pixel>&, unsigned char*, int, int);
-    void predictLandmakars(unsigned char*, int, int);
+    std::vector<dlib::full_object_detection> predictLandmakars(unsigned char*, int, int);
 }
 
 

@@ -1,6 +1,6 @@
 #include "dlib_utils.hpp"
 
-#define CORRECT_CH(V) ((unsigned char)V < 0 ? 0 : V > 255000 ? 255 : V / 1000)
+#define CORRECT_CH(V) ((unsigned char)(V < 0 ? 0 : V > 255000 ? 255 : V / 1000))
 
 void myu::setShapePredictor(std::string spn) {
     dlib::deserialize(spn) >> myu::sp;
@@ -32,7 +32,7 @@ void myu::convertBytes(dlib::array2d<dlib::rgb_pixel>& out, unsigned char* yuv, 
     }
 }
 
-void myu::predictLandmakars(unsigned char* yuv, int w, int h){
+std::vector<dlib::full_object_detection> myu::predictLandmakars(unsigned char* yuv, int w, int h){
     /*
         Convert Bytes to RGB image
         Scale it up
@@ -48,4 +48,6 @@ void myu::predictLandmakars(unsigned char* yuv, int w, int h){
         dlib::full_object_detection shape = sp(img, dets[j]);
         shapes.push_back(shape);
     }
+
+    return shapes;
 }
