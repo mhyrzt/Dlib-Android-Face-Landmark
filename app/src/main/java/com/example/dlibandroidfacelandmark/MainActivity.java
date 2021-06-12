@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dlibandroidfacelandmark.databinding.ActivityMainBinding;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraView camera;
     private boolean facing = true;
     private Button facingButton;
+    private ImageView overLay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        startCamera();
 
+        startCamera();
     }
 
     /**
@@ -40,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     public native String stringFromJNI();
 
     private void startCamera() {
-        camera = (CameraView) findViewById(R.id.camera);
+        camera  = (CameraView) findViewById(R.id.camera);
+        overLay = (ImageView)  findViewById(R.id.cameraOverLay);
         camera.setLifecycleOwner(this);
+        camera.addFrameProcessor(new DLibFrameProcessor(overLay));
         facingButtonClickListener();
     }
 
