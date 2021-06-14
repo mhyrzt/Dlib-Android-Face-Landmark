@@ -1,15 +1,20 @@
 package com.example.dlibandroidfacelandmark;
 
+import android.os.Environment;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
 public class DLibResult {
     private ArrayList<Face> faces;
     private long count;
-    static { System.loadLibrary("dlib_face_result");}
-    DLibResult() {
+    static { System.loadLibrary("dlib_face_result"); }
+
+    DLibResult(String fileName) {
         faces = new ArrayList<Face>();
         count = 0;
+        setupDlib(fileName);
     }
 
     public void addFace(Face face) {
@@ -25,5 +30,11 @@ public class DLibResult {
         return this.count;
     }
 
-    public native void test();
+    public void resetValues() {
+        count = 0;
+        faces.clear();
+    }
+
+    private native void setupDlib(String fileName);
+    public native void processFrame(byte[] yuv, int w, int h);
 }

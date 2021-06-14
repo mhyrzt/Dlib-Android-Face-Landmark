@@ -2,7 +2,9 @@ package com.example.dlibandroidfacelandmark;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,6 +15,9 @@ import android.widget.TextView;
 import com.example.dlibandroidfacelandmark.databinding.ActivityMainBinding;
 import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.controls.Facing;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         startCamera();
-        DLibResult ds = new DLibResult();
+
+        getFilesDir();
     }
 
     /**
@@ -52,8 +58,14 @@ public class MainActivity extends AppCompatActivity {
         camera  = (CameraView) findViewById(R.id.camera);
         overLay = (ImageView)  findViewById(R.id.cameraOverLay);
         camera.setLifecycleOwner(this);
-        camera.addFrameProcessor(new DLibFrameProcessor(overLay));
+        setupFramProcessor();
         facingButtonClickListener();
+    }
+
+    private void setupFramProcessor() {
+        String fileName = "/Download/" + "shape_predictor_68_face_landmarks_GTX.dat";
+        fileName = Environment.getExternalStorageDirectory() + fileName;
+        camera.addFrameProcessor(new DLibFrameProcessor(overLay, new DLibResult(fileName)));
     }
 
     private void facingButtonClickListener() {
@@ -70,4 +82,6 @@ public class MainActivity extends AppCompatActivity {
         camera.setFacing(facing ? Facing.FRONT : Facing.BACK);
         facing = !facing;
     }
+
+
 }

@@ -53,3 +53,4 @@ add_library(
         dlib_face_result.cpp
 )
 target_link_libraries(dlib_face_result dlib_utils)
+target_link_libraries(dlib_face_result ${log-lib})
