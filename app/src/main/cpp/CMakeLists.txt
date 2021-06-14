@@ -30,6 +30,11 @@ add_library( # Sets the name of the library.
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
+find_library(
+        android-lib
+        android
+)
+
 find_library( # Sets the name of the path variable.
               log-lib
 
@@ -54,3 +59,4 @@ add_library(
 )
 target_link_libraries(dlib_face_result dlib_utils)
 target_link_libraries(dlib_face_result ${log-lib})
+target_link_libraries(dlib_face_result ${android-lib})

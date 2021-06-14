@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         startCamera();
 
         getFilesDir();
@@ -63,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupFramProcessor() {
-        String fileName = "/Download/" + "shape_predictor_68_face_landmarks_GTX.dat";
-        fileName = Environment.getExternalStorageDirectory() + fileName;
-        camera.addFrameProcessor(new DLibFrameProcessor(overLay, new DLibResult(fileName)));
+        String fileName = "shape_predictor_68_face_landmarks_GTX.dat";
+        camera.addFrameProcessor(new DLibFrameProcessor(
+                overLay,
+                new DLibResult(getAssets(), fileName)
+        ));
     }
 
     private void facingButtonClickListener() {

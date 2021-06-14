@@ -1,5 +1,6 @@
 package com.example.dlibandroidfacelandmark;
 
+import android.content.res.AssetManager;
 import android.os.Environment;
 
 import java.io.InputStream;
@@ -11,10 +12,10 @@ public class DLibResult {
     private long count;
     static { System.loadLibrary("dlib_face_result"); }
 
-    DLibResult(String fileName) {
+    DLibResult(AssetManager assetManager, String fileName) {
         faces = new ArrayList<Face>();
         count = 0;
-        setupDlib(fileName);
+        setupDlib(assetManager, fileName);
     }
 
     public void addFace(Face face) {
@@ -35,6 +36,6 @@ public class DLibResult {
         faces.clear();
     }
 
-    private native void setupDlib(String fileName);
+    private native void setupDlib(AssetManager assetManager, String fileName);
     public native void processFrame(byte[] yuv, int w, int h);
 }
