@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "614961754316",
+    "project_id": "fir-mlkit-89206",
+    "storage_bucket": "fir-mlkit-89206.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614961754316:android:d87867835c6e02325c1269",
+        "android_client_info": {
+          "package_name": "com.example.dlibandroidfacelandmark"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "614961754316-oesl7jiekgq5246eeraspnu3tdmbkd8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdoMZrRdASkG4iaGSH6nvDqM1d2lup3yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614961754316-oesl7jiekgq5246eeraspnu3tdmbkd8b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

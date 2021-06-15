@@ -1,6 +1,7 @@
 package com.example.dlibandroidfacelandmark;
 
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Environment;
 
 import java.io.InputStream;
@@ -37,5 +38,5 @@ public class DLibResult {
     }
 
     private native void setupDlib(AssetManager assetManager, String fileName);
-    public native void processFrame(byte[] yuv, int w, int h);
+    public native void processFrame(Bitmap bitmap);
 }

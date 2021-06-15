@@ -25,7 +25,6 @@ public class DLibFrameProcessor implements FrameProcessor {
     }
 
     @Override
-    @WorkerThread
     public void process(@NonNull @NotNull Frame frame) {
         // due to using enigne 1 are
         // .getData() always returns
@@ -36,7 +35,7 @@ public class DLibFrameProcessor implements FrameProcessor {
         Size size  = frame.getSize();
         int h = size.getHeight();
         int w = size.getWidth();
-        dLibResult.processFrame(yuv, w, h);
+//        dLibResult.processFrame(yuv, w, h);
         Log.v(TAG, "process: Frame Processed");
     }
 }

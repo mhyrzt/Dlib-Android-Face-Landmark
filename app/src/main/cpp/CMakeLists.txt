@@ -60,3 +60,4 @@ add_library(
 target_link_libraries(dlib_face_result dlib_utils)
 target_link_libraries(dlib_face_result ${log-lib})
 target_link_libraries(dlib_face_result ${android-lib})
+target_link_libraries(dlib_face_result -ljnigraphics)
