@@ -9,8 +9,11 @@ public class Position {
         this.y = y;
     }
 
-    public double[] getPosition() {
-        double[] p = {this.x, this.y};
-        return p;
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 }

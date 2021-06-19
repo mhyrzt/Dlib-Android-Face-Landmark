@@ -9,32 +9,25 @@ import java.util.ArrayList;
 
 
 public class DLibResult {
-    private ArrayList<Face> faces;
-    private long count;
-    static { System.loadLibrary("dlib_face_result"); }
+
+    static {
+        System.loadLibrary("dlib_face_result");
+    }
+
+    private ArrayList<Position> positions;
 
     DLibResult(AssetManager assetManager, String fileName) {
-        faces = new ArrayList<Face>();
-        count = 0;
+        positions = new ArrayList<Position>();
         setupDlib(assetManager, fileName);
     }
 
-    public void addFace(Face face) {
-        faces.add(face);
-        count++;
+    public void addPosition(int x, int y) {
+        Position position = new Position(x, y);
+        positions.add(position);
     }
 
-    public ArrayList<Face> getFaces() {
-        return this.faces;
-    }
-
-    public long getCount() {
-        return this.count;
-    }
-
-    public void resetValues() {
-        count = 0;
-        faces.clear();
+    public ArrayList<Position> getPositions() {
+        return positions;
     }
 
     private native void setupDlib(AssetManager assetManager, String fileName);

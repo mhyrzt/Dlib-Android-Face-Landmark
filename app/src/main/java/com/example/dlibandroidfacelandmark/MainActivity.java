@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
@@ -103,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void dlibFrameProcessor(@NonNull @NotNull Frame frame) {
         Bitmap image = frame2Bitmap(frame, 80);
-        image = scaleBitmap(image);
         dLibResult.processFrame(image);
     }
 
@@ -121,12 +123,18 @@ public class MainActivity extends AppCompatActivity {
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
-    private Bitmap scaleBitmap(@NotNull Bitmap image) {
-        float aspectRatio = (float) image.getWidth() / (float) image.getHeight();
-        int width  = 360;
-        int height = Math.round(width / aspectRatio);
-
-        return Bitmap.createScaledBitmap(image, width, height, false);
+    private void drawLandmarks(Bitmap image) {
+        Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(bitmap);
+        Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.RED);
+        for (Position p: dLibResult.getPositions())
+            canvas.drawCircle(
+                    (float) p.getX(),
+                    (float) p.getY(),
+                    1,
+                    paint
+            );
+        this.overLay.setImageBitmap(bitmap);
     }
-
 }

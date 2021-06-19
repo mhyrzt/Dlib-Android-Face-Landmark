@@ -8,12 +8,6 @@
 
 dlib::shape_predictor sp;
 dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
-//unsigned char* as_unsigned_char_array(jbyteArray array, JNIEnv* env) {
-//    int len = env->GetArrayLength(array);
-//    unsigned char* buf = new unsigned char[len];
-//    env->GetByteArrayRegion(array, 0, len, reinterpret_cast<jbyte*>(buf));
-//    return buf;
-//}
 
 struct membuf: std::streambuf {
     membuf(char* begin, char * end){
@@ -21,26 +15,17 @@ struct membuf: std::streambuf {
     }
 };
 
-void bitmap2Array2d(JNIEnv* env, jobject bitmap, dlib::array2d<dlib::bgr_pixel>& out) {
+void bitmap2Array2dRGB(JNIEnv* env, jobject bitmap, dlib::array2d<dlib::bgr_pixel>& out) {
     AndroidBitmapInfo bitmapInfo;
-    void *pixels;
-    int state;
+    void *pixels; int state;
 
-    if (0 > (state = AndroidBitmap_getInfo(env, bitmap, &bitmapInfo))){
-        // ERROR
-        return;
-    } else if (bitmapInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        // !RGB_565
-    }
-
-    if (0 > (state =AndroidBitmap_lockPixels(env, bitmap, &pixels))) {
-        // ERROR LOCK FAILED
-        return;
-    }
+    if (0 > (state = AndroidBitmap_getInfo(env, bitmap, &bitmapInfo))){return/* ERROR */; }
+    else if (bitmapInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {/* !RGB_565 */}
+    if (0 > (state = AndroidBitmap_lockPixels(env, bitmap, &pixels))) {return /* ERROR LOCK FAILED */ ;}
 
     out.set_size((long) bitmapInfo.height, (long) bitmapInfo.width);
-
     char* line = (char *) pixels;
+
     for (int h = 0; h < bitmapInfo.height; ++h) {
         for (int w = 0; w < bitmapInfo.width; ++w) {
             uint32_t* color = (uint32_t *) (line + 4 * w);
@@ -50,7 +35,30 @@ void bitmap2Array2d(JNIEnv* env, jobject bitmap, dlib::array2d<dlib::bgr_pixel>&
         }
         line += bitmapInfo.stride;
     }
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
 
+void bitmap2Array2dGrayScale(JNIEnv* env, jobject bitmap, dlib::array2d<unsigned char>& out) {
+    AndroidBitmapInfo bitmapInfo;
+    void *pixels; int state;
+
+    if (0 > (state = AndroidBitmap_getInfo(env, bitmap, &bitmapInfo))){return/* ERROR */; }
+    else if (bitmapInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {/* !RGB_565 */}
+    if (0 > (state = AndroidBitmap_lockPixels(env, bitmap, &pixels))) {return /* ERROR LOCK FAILED */ ;}
+
+    out.set_size((long) bitmapInfo.height, (long) bitmapInfo.width);
+    char* line = (char *) pixels;
+
+    for (int h = 0; h < bitmapInfo.height; ++h) {
+        for (int w = 0; w < bitmapInfo.width; ++w) {
+            uint32_t* color = (uint32_t *) (line + 4 * w);
+            auto r = (unsigned char)(0xFF & (*color));
+            auto g = (unsigned char)(0xFF & ((*color) >> 8));
+            auto b = (unsigned char)(0xFF & ((*color) >> 16));
+            out[h][w] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+        line += bitmapInfo.stride;
+    }
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
@@ -80,17 +88,36 @@ Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(JNIEnv *env, jobje
     __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "LOADED SUCCESSFULLY!");
 }
 
+void addNewPosition(JNIEnv* env, jobject thiz, long x, long y) {
+    jclass thizz = env->GetObjectClass(thiz);
+    if (NULL == thizz)
+        return;
+    jmethodID addPos = env->GetMethodID(thizz, "addPosition", "(II)V");
+    if (NULL == addPos)
+        return;
+    env->CallVoidMethod(thiz, addPos, x, y);
+}
+
+void addNewPosition(JNIEnv* env, jobject thiz, dlib::point point) {
+    addNewPosition(env, thiz, point.x() / 2, point.y() / 2);
+}
+
+void addFaceLandmarks(JNIEnv* env, jobject thiz,
+                      dlib::array2d<unsigned char>& img,
+                      dlib::rectangle& det ) {
+    dlib::full_object_detection shape = sp(img, det);
+    for (unsigned long i = 0; i < shape.num_parts(); i++)
+        addNewPosition(env, thiz, shape.part(i));
+
+}
+
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_dlibandroidfacelandmark_DLibResult_processFrame(JNIEnv *env, jobject thiz,
-                                                                 jobject bitmap) {
-    dlib::array2d<dlib::bgr_pixel> img;
-    bitmap2Array2d(env, bitmap, img);
-    //dlib::pyramid_up(img);
-    std::vector<dlib::full_object_detection> shapes;
-    std::vector<dlib::rectangle> dets;
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START");
-    dets = detector(img);
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "DONE");
+Java_com_example_dlibandroidfacelandmark_DLibResult_processFrame(JNIEnv *env, jobject thiz, jobject bitmap) {
+    dlib::array2d<unsigned char> img;
+    bitmap2Array2dGrayScale(env, bitmap, img);
+    dlib::pyramid_up(img);
 
+    for (dlib::rectangle det: detector(img))
+        addFaceLandmarks(env, thiz, img, det);
 }
