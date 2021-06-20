@@ -17,24 +17,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/cameraOverLay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
+    <ImageView
+        android:id="@+id/resultProcess"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_drawOnPictureSnapshot="true"
+        app:layout_drawOnPreview="true"
+        app:layout_drawOnVideoSnapshot="true"/>
     </com.otaliastudios.cameraview.CameraView>
 
     <Button
         android:id="@+id/cameraChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:text="Camera"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/camera" />
+        app:layout_constraintTop_toBottomOf="@+id/camera"
+        app:layout_constraintVertical_bias="0.375" />
+
+    <Button
+        android:id="@+id/btnCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="144dp"
+        android:layout_marginEnd="32dp"
+        android:text="CAPTURE"
+        app:layout_constraintBaseline_toBaselineOf="@id/cameraChange"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cameraChange" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

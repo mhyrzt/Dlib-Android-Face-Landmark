@@ -114,10 +114,13 @@ void addFaceLandmarks(JNIEnv* env, jobject thiz,
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_dlibandroidfacelandmark_DLibResult_processFrame(JNIEnv *env, jobject thiz, jobject bitmap) {
+    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START FRAME PROCESSING");
     dlib::array2d<unsigned char> img;
     bitmap2Array2dGrayScale(env, bitmap, img);
     dlib::pyramid_up(img);
 
     for (dlib::rectangle det: detector(img))
         addFaceLandmarks(env, thiz, img, det);
+    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "FRAME PROCESSING DONE!");
+
 }
