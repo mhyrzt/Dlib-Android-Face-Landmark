@@ -13,10 +13,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.dlibandroidfacelandmark.databinding.ActivityMainBinding;
 
@@ -35,13 +37,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
 
     private ActivityMainBinding binding;
     private final String TAG = "MainActivity";
+    private final Handler handler = new Handler();
     private final String shape_pred_file = "shape_predictor_68_face_landmarks_GTX.dat";
     private boolean facing = true;
     private Button btnFacing;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         camera.setMode(Mode.PICTURE);
         camera.setFacing(Facing.FRONT);
 
-        facing = camera.getFacing() == Facing.FRONT;
+        facing = camera.getFacing() == Facing.BACK;
         facingButtonClickListener();
         captureButtinClickListener();
     }
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Bitmap conv2NV21(byte[] data, Size size) {
-        Log.d(TAG, "conv2NV21: ");
         int h = size.getHeight();
         int w = size.getWidth();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -102,17 +103,20 @@ public class MainActivity extends AppCompatActivity {
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
                 super.onPictureTaken(result);
 
-                result.toBitmap(640, 640, new BitmapCallback() {
+                result.toBitmap(500, 500, new BitmapCallback() {
                     @Override
                     public void onBitmapReady(@Nullable @org.jetbrains.annotations.Nullable Bitmap bitmap) {
                         if (null == bitmap)
                             return;
-//                        AtomicReference<Bitmap> result = null;
-//                        new Thread(() -> {
-//                            result.set(processLandmarks(bitmap));
-//                        }).start();
-                        Bitmap result = processLandmarks(bitmap);
-                        showResultLayOut(result);
+                        new Thread(() -> {
+                            Bitmap result = processLandmarks(bitmap);
+                            handler.post(() -> {
+                                processingResult.setImageBitmap(result);
+                            });
+
+                        }).start();
+
+                        //showResultLayOut(result);
                     }
                 });
             }
@@ -145,11 +149,11 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
         Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.RED);
+        paint.setColor(Color.GREEN);
         for (Position p: dLibResult.getPositions()){
             float x = (float) p.getX();
             float y = (float) p.getY();
-            Log.d(TAG, "processLandmarks: POS = " + x + ", " + y);
+            Log.d(TAG, "processLandmarks: " + x + " " + y);
             canvas.drawCircle(x, y, 2, paint);
         }
         return bitmap;
@@ -157,6 +161,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void showResultLayOut(Bitmap bitmap) {
         processingResult.setImageBitmap(bitmap);
+    }
+
+    private void processImage(Bitmap bitmap) {
+        if (null == bitmap)
+            return;
+        new Thread(() -> {
+            handler.post(() -> {
+                Toast
+                        .makeText(
+                            getApplicationContext(),
+                            "PROCESSING STARTED",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show();
+                showResultLayOut(
+                        processLandmarks(bitmap)
+                );
+                Toast
+                        .makeText(
+                                getApplicationContext(),
+                                "PROCESSING DONE",
+                                Toast.LENGTH_SHORT
+                        )
+                        .show();
+            });
+        }).start();
     }
 
 }
