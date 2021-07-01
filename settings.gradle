@@ -1,2 +1,3 @@
 rootProject.name = "DLib Android Face Landmark"
 include ':app'
+include ':openCVLibrary3414'

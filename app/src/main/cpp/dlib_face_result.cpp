@@ -3,6 +3,7 @@
 #include <android/log.h>
 #include <android/asset_manager_jni.h>
 #include <android/bitmap.h>
+#include <vector>
 #include "dlib_android/dlib_utils.hpp"
 #define TAG "DLIB_FACE_CPP"
 
@@ -111,16 +112,40 @@ void addFaceLandmarks(JNIEnv* env, jobject thiz,
 
 }
 
+std::vector<dlib::rectangle> bb2rect(JNIEnv* env, jintArray bb) {
+    std::vector<dlib::rectangle> rects;
+    jsize len = env->GetArrayLength(bb);
+    jint* arr = env->GetIntArrayElements(bb, NULL);
+    long x, y, w, h, i, j;
+    for (i = 0; i < len / 4; i++) {
+        j = i * 4;
+        x = arr[j++];
+        y = arr[j++];
+        w = arr[j++];
+        h = arr[j++];
+        dlib::rectangle rect(x, y, x + w, y + h);
+        rects.push_back(rect);
+    }
+    env->ReleaseIntArrayElements(bb, arr, NULL);
+    return rects;
+}
+
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_dlibandroidfacelandmark_DLibResult_processFrame(JNIEnv *env, jobject thiz, jobject bitmap) {
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START FRAME PROCESSING");
+Java_com_example_dlibandroidfacelandmark_DLibResult_processLandMarks(
+        JNIEnv *env,
+        jobject thiz,
+        jobject bitmap,
+        jintArray bb
+) {
+//    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START FRAME PROCESSING");
+
     dlib::array2d<unsigned char> img;
     bitmap2Array2dGrayScale(env, bitmap, img);
-    dlib::pyramid_up(img);
+    std::vector<dlib::rectangle> rects = bb2rect(env, bb);
 
-    for (dlib::rectangle det: detector(img))
+    for (dlib::rectangle det: rects)
         addFaceLandmarks(env, thiz, img, det);
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "FRAME PROCESSING DONE!");
 
+//    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "FRAME PROCESSING DONE!");
 }

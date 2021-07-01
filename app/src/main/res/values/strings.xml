@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DLIB</string>
+    <string name="haarcascade_file">haarcascade_frontalface_alt2.xml</string>
 </resources>

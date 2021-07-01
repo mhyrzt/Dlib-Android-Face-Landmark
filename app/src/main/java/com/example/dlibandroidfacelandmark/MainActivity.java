@@ -33,6 +33,7 @@ import com.otaliastudios.cameraview.size.Size;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView processingResult;
     private CameraView camera;
     private DLibResult dLibResult;
+    private FaceDetectorOpenCv faceDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getFilesDir();
-        dLibResult = new DLibResult(getAssets(), shape_pred_file);
-
+        dLibResult   = new DLibResult(this, shape_pred_file);
+        try {
+            faceDetector = new FaceDetectorOpenCv(this);
+            Log.d(TAG, "onCreate: OPENCV DONE");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         startCamera();
     }
 
@@ -103,20 +110,13 @@ public class MainActivity extends AppCompatActivity {
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
                 super.onPictureTaken(result);
 
-                result.toBitmap(500, 500, new BitmapCallback() {
+                result.toBitmap(1920, 1920, new BitmapCallback() {
                     @Override
                     public void onBitmapReady(@Nullable @org.jetbrains.annotations.Nullable Bitmap bitmap) {
                         if (null == bitmap)
                             return;
-                        new Thread(() -> {
-                            Bitmap result = processLandmarks(bitmap);
-                            handler.post(() -> {
-                                processingResult.setImageBitmap(result);
-                            });
-
-                        }).start();
-
-                        //showResultLayOut(result);
+                        Bitmap result = processLandmarks(bitmap);
+                        showResultLayOut(result);
                     }
                 });
             }
@@ -151,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
         Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.GREEN);
         for (Position p: dLibResult.getPositions()){
-            float x = (float) p.getX();
-            float y = (float) p.getY();
-            Log.d(TAG, "processLandmarks: " + x + " " + y);
+            float x = (float) p.getX() * 2;
+            float y = (float) p.getY() * 2;
+           // Log.d(TAG, "processLandmarks: " + x + " " + y);
             canvas.drawCircle(x, y, 2, paint);
         }
         return bitmap;
@@ -161,32 +161,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void showResultLayOut(Bitmap bitmap) {
         processingResult.setImageBitmap(bitmap);
+
     }
 
-    private void processImage(Bitmap bitmap) {
-        if (null == bitmap)
-            return;
-        new Thread(() -> {
-            handler.post(() -> {
-                Toast
-                        .makeText(
-                            getApplicationContext(),
-                            "PROCESSING STARTED",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show();
-                showResultLayOut(
-                        processLandmarks(bitmap)
-                );
-                Toast
-                        .makeText(
-                                getApplicationContext(),
-                                "PROCESSING DONE",
-                                Toast.LENGTH_SHORT
-                        )
-                        .show();
-            });
-        }).start();
-    }
 
 }
