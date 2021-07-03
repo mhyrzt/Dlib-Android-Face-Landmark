@@ -2,8 +2,7 @@
 at first it's good to mention that it's not a great and optimized Implementation of face landmark detection it's kinda naive and simple one. :)
 
 # summary
-
-in this project utilize following libraries for making a face landmark detection system:
+this project utilize following libraries for making a face landmark detection system:
 
 - [dlib](http://dlib.net/): used this library natively with c++ for extracting face landmarks.
 

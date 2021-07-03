@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +37,11 @@ import com.otaliastudios.cameraview.size.Size;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
@@ -161,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
         Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.RED);
         for (Position p: dLibResult.getPositions()){
             float x = (float) p.getX() * 2;
             float y = (float) p.getY() * 2;
-            canvas.drawCircle(x, y, 3, paint);
+            canvas.drawCircle(x, y, 10, paint);
         }
         return bitmap;
     }
