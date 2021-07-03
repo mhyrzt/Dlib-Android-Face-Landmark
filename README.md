@@ -1,6 +1,8 @@
 # DLib Android Face Landmark Detection
 it's good to mention that this project is not a greatly optimised Implementation of face landmark detection it's kinda naive and simple one. :)
-
+```
+$ git clone --recursive https://github.com/mhyrzt/Dlib-Android-Face-Landmark.git
+```
 # Summary
 It utilizes following libraries for making a face landmark detection system:
 
