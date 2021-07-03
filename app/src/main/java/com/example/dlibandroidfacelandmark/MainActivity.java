@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
@@ -28,6 +29,8 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Mode;
+import com.otaliastudios.cameraview.frame.Frame;
+import com.otaliastudios.cameraview.frame.FrameProcessor;
 import com.otaliastudios.cameraview.size.Size;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler();
     private final String shape_pred_file = "shape_predictor_68_face_landmarks_GTX.dat";
     private boolean facing = true;
-    private Button btnFacing;
-    private Button btnCapture;
     private ImageView processingResult;
     private CameraView camera;
     private DLibResult dLibResult;
-    private FaceDetectorOpenCv faceDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         getFilesDir();
-        dLibResult   = new DLibResult(this, shape_pred_file);
-        try {
-            faceDetector = new FaceDetectorOpenCv(this);
-            Log.d(TAG, "onCreate: OPENCV DONE");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dLibResult = new DLibResult(this, shape_pred_file);
         startCamera();
     }
 
@@ -78,14 +73,16 @@ public class MainActivity extends AppCompatActivity {
 
         camera.setMode(Mode.PICTURE);
         camera.setFacing(Facing.FRONT);
-
         facing = camera.getFacing() == Facing.BACK;
+        setFrameProcessor();
+
+        clearButtonClickListener();
         facingButtonClickListener();
         captureButtinClickListener();
     }
 
     private void facingButtonClickListener() {
-        btnFacing = (Button) findViewById(R.id.cameraChange);
+        Button btnFacing = (Button) findViewById(R.id.cameraChange);
         btnFacing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,9 +91,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private Bitmap conv2NV21(byte[] data, Size size) {
+    private Bitmap conv2NV21(Frame frame) {
+        byte[] data = frame.getData();
+        Size size   = frame.getSize();
+
         int h = size.getHeight();
         int w = size.getWidth();
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, w, h, null);
         yuvImage.compressToJpeg(new Rect(0, 0, w, h), 80, out);
@@ -110,14 +111,14 @@ public class MainActivity extends AppCompatActivity {
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
                 super.onPictureTaken(result);
 
-                result.toBitmap(1920, 1920, new BitmapCallback() {
+                result.toBitmap(4096, 4096, new BitmapCallback() {
                     @Override
                     public void onBitmapReady(@Nullable @org.jetbrains.annotations.Nullable Bitmap bitmap) {
-                        if (null == bitmap)
-                            return;
+                        if (null == bitmap) return;
                         Bitmap result = processLandmarks(bitmap);
                         showResultLayOut(result);
                     }
+
                 });
             }
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void captureButtinClickListener() {
         setupCamerClickListener();
-        btnCapture = (Button) findViewById(R.id.btnCapture);
+        Button btnCapture = (Button) findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +145,17 @@ public class MainActivity extends AppCompatActivity {
         facing = !facing;
     }
 
+    private void setFrameProcessor() {
+        this.camera.setFrameProcessingExecutors(4);
+        this.camera.setFrameProcessingPoolSize(5);
+        this.camera.addFrameProcessor(new FrameProcessor() {
+            @Override
+            public void process(@NonNull @NotNull Frame frame) {
+//                camera.takePicture();
+            }
+        });
+    }
+
     private Bitmap processLandmarks(Bitmap image) {
         this.dLibResult.processFrame(image);
         Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
@@ -153,16 +165,24 @@ public class MainActivity extends AppCompatActivity {
         for (Position p: dLibResult.getPositions()){
             float x = (float) p.getX() * 2;
             float y = (float) p.getY() * 2;
-           // Log.d(TAG, "processLandmarks: " + x + " " + y);
-            canvas.drawCircle(x, y, 2, paint);
+            canvas.drawCircle(x, y, 3, paint);
         }
         return bitmap;
     }
 
     private void showResultLayOut(Bitmap bitmap) {
+        processingResult.setImageResource(0);
         processingResult.setImageBitmap(bitmap);
-
     }
 
+    private void clearButtonClickListener() {
+        Button btnClear = (Button) findViewById(R.id.btnClear);
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processingResult.setImageResource(0);
+            }
+        });
+    }
 
 }

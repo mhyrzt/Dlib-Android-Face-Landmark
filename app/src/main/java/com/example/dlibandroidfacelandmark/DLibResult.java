@@ -45,7 +45,6 @@ public class DLibResult {
     public ArrayList<Position> getPositions() {
         return positions;
     }
-
     private int[] detectBB(Bitmap image) {
         ArrayList<Rect> rects = faceDetector.detectFaces(image);
         int[] bb = new int[rects.size() * 4];
@@ -56,11 +55,14 @@ public class DLibResult {
             bb[j++] = rects.get(i).x;
             bb[j++] = rects.get(i).y;
             bb[j++] = rects.get(i).width;
-            bb[j]   = rects.get(i).height;
+            bb[j++] = rects.get(i).height;
         }
         return bb;
     }
+
+
     public void processFrame(Bitmap image) {
+        this.positions.clear();
         processLandMarks(image, detectBB(image));
     }
     private native void setupDlib(AssetManager assetManager, String fileName);

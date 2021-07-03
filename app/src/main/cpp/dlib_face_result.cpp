@@ -138,7 +138,6 @@ Java_com_example_dlibandroidfacelandmark_DLibResult_processLandMarks(
         jobject bitmap,
         jintArray bb
 ) {
-//    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START FRAME PROCESSING");
 
     dlib::array2d<unsigned char> img;
     bitmap2Array2dGrayScale(env, bitmap, img);
@@ -146,6 +145,4 @@ Java_com_example_dlibandroidfacelandmark_DLibResult_processLandMarks(
 
     for (dlib::rectangle det: rects)
         addFaceLandmarks(env, thiz, img, det);
-
-//    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "FRAME PROCESSING DONE!");
 }

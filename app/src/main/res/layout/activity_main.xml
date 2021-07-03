@@ -50,4 +50,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cameraChange" />
 
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CLEAR"
+        app:layout_constraintBaseline_toBaselineOf="@id/cameraChange"
+        app:layout_constraintEnd_toStartOf="@+id/btnCapture"
+        app:layout_constraintStart_toEndOf="@+id/cameraChange" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

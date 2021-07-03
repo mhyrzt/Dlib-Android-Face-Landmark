@@ -1,5 +1,7 @@
 # DLib Android Face Landmark Detection
-## summary
+at first it's good to mention that it's not a great and optimized Implementation of face landmark detection it's kinda naive and simple one. :)
+
+# summary
 
 in this project utilize following libraries for making a face landmark detection system:
 
@@ -8,5 +10,3 @@ in this project utilize following libraries for making a face landmark detection
 - [CamerView](https://github.com/natario1/CameraView): for capturing image from mobile cameras (frontal & back) and processing frames in real time.
 
 - [OpenCv](https://opencv.org/android/): due to the slow speed of ```dlib::frontal_face_detector()``` decided to use OpenCv for face Bounding Box Detection.
-
-## Project Structure
