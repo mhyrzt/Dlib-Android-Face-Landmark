@@ -16,7 +16,11 @@ struct membuf: std::streambuf {
     }
 };
 
-void bitmap2Array2dRGB(JNIEnv* env, jobject bitmap, dlib::array2d<dlib::bgr_pixel>& out) {
+void bitmap2Array2dRGB(
+        JNIEnv* env,
+        jobject bitmap,
+        dlib::array2d<dlib::bgr_pixel>& out
+        ) {
     AndroidBitmapInfo bitmapInfo;
     void *pixels; int state;
 
@@ -39,7 +43,11 @@ void bitmap2Array2dRGB(JNIEnv* env, jobject bitmap, dlib::array2d<dlib::bgr_pixe
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
-void bitmap2Array2dGrayScale(JNIEnv* env, jobject bitmap, dlib::array2d<unsigned char>& out) {
+void bitmap2Array2dGrayScale(
+        JNIEnv* env,
+        jobject bitmap,
+        dlib::array2d<unsigned char>& out
+        ) {
     AndroidBitmapInfo bitmapInfo;
     void *pixels; int state;
 
@@ -65,10 +73,12 @@ void bitmap2Array2dGrayScale(JNIEnv* env, jobject bitmap, dlib::array2d<unsigned
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(JNIEnv *env, jobject thiz,
-    jobject asset_manager,
-    jstring file_name
-) {
+Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(
+        JNIEnv *env,
+        jobject thiz,
+        jobject asset_manager,
+        jstring file_name
+        ) {
     __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START LOADING SHAPE PRED.");
 
     const char* fileName = (env)->GetStringUTFChars(file_name, NULL);
@@ -103,9 +113,12 @@ void addNewPosition(JNIEnv* env, jobject thiz, dlib::point point) {
     addNewPosition(env, thiz, point.x() / 2, point.y() / 2);
 }
 
-void addFaceLandmarks(JNIEnv* env, jobject thiz,
-                      dlib::array2d<unsigned char>& img,
-                      dlib::rectangle& det ) {
+void addFaceLandmarks(
+        JNIEnv* env,
+        jobject thiz,
+        dlib::array2d<unsigned char>& img,
+        dlib::rectangle& det
+        ) {
     dlib::full_object_detection shape = sp(img, det);
     for (unsigned long i = 0; i < shape.num_parts(); i++)
         addNewPosition(env, thiz, shape.part(i));
