@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView processingResult;
     private CameraView camera;
     private DLibResult dLibResult;
+    private FacePainter facePainter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 "shape_predictor_68_face_landmarks_GTX.dat"
         );
         startCamera();
+        facePainter = new FacePainter();
     }
 
     private void startCamera() {
@@ -108,22 +110,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Bitmap processLandmarks(Bitmap image) {
-        Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-        Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.RED);
-        
         dLibResult.processFrame(image);
-        for (Face f: dLibResult.getFaces())
-            for (Position p: f.getPositions())
-                canvas.drawCircle(
-                        (float) p.getX() * 2,
-                        (float) p.getY() * 2,
-                        5,
-                        paint
-                );
-
-        return bitmap;
+        facePainter
+                .setBitmap(image)
+                .drawFaces(dLibResult.getFaces());
+        return facePainter.getBitmap();
     }
 
     private void showResultLayOut(Bitmap bitmap) {

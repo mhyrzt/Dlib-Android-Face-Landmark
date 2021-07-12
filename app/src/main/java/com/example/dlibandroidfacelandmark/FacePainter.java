@@ -26,14 +26,16 @@ public class FacePainter {
         return this;
     }
 
-
-    public FacePainter drawCircle(float x, float y) {
+    public void drawCircle(float x, float y) {
         this.canvas.drawCircle(x, y, this.radius, this.paint);
-        return this;
     }
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public void setColor(int color) {
+        this.paint.setColor(color);
     }
 
     public Bitmap getBitmap() {
@@ -47,9 +49,9 @@ public class FacePainter {
         );
     }
 
-    public void drawPositions(ArrayList<Position> ps) {
-        for (Position p: ps)
-            drawPosition(p);
+    public void drawPositions(ArrayList<Position> positions) {
+        for (Position position: positions)
+            drawPosition(position);
     }
 
     public void drawPositions(Face face) {
@@ -57,8 +59,12 @@ public class FacePainter {
     }
 
     public void drawFaces(ArrayList<Face> faces) {
+        this.clearCanvas();
         for (Face face: faces)
             drawPositions(face);
     }
 
+    public void clearCanvas() {
+        this.canvas.drawColor(Color.TRANSPARENT);
+    }
 }
