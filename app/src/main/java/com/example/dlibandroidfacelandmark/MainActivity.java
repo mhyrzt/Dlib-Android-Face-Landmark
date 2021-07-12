@@ -1,13 +1,9 @@
 package com.example.dlibandroidfacelandmark;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -22,12 +18,8 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Mode;
-import com.otaliastudios.cameraview.frame.Frame;
-import com.otaliastudios.cameraview.size.Size;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,20 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(v -> changeFacing());
     }
 
-    private Bitmap conv2NV21(Frame frame) {
-        byte[] data = frame.getData();
-        Size size   = frame.getSize();
-
-        int h = size.getHeight();
-        int w = size.getWidth();
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, w, h, null);
-        yuvImage.compressToJpeg(new Rect(0, 0, w, h), 80, out);
-        byte[] imageBytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-    }
-
     private void setupCamerClickListener() {
         camera.addCameraListener(new CameraListener() {
             @Override
@@ -126,9 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private void setFrameProcessor() {
         this.camera.setFrameProcessingExecutors(4);
         this.camera.setFrameProcessingPoolSize(5);
-        this.camera.addFrameProcessor(frame -> {
-//                camera.takePicture();
-        });
+        this.camera.addFrameProcessor(frame -> { });
     }
 
     private Bitmap processLandmarks(Bitmap image) {
@@ -146,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
                         5,
                         paint
                 );
-
 
         return bitmap;
     }

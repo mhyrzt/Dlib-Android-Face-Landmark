@@ -66,5 +66,4 @@ public class DLibResult {
 
     private native void setupDlib(AssetManager assetManager, String fileName);
     private native void processLandMarks(Bitmap bitmap, int[] bb);
-
 }
