@@ -61,42 +61,14 @@ void bitmap2Array2dGrayScale(
     for (int h = 0; h < bitmapInfo.height; ++h) {
         for (int w = 0; w < bitmapInfo.width; ++w) {
             uint32_t* color = (uint32_t *) (line + 4 * w);
-            auto r = (unsigned char)(0xFF & (*color));
-            auto g = (unsigned char)(0xFF & ((*color) >> 8));
-            auto b = (unsigned char)(0xFF & ((*color) >> 16));
+            unsigned char r = (unsigned char)(0xFF & (*color));
+            unsigned char g = (unsigned char)(0xFF & ((*color) >> 8));
+            unsigned char b = (unsigned char)(0xFF & ((*color) >> 16));
             out[h][w] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
         }
         line += bitmapInfo.stride;
     }
     AndroidBitmap_unlockPixels(env, bitmap);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(
-        JNIEnv *env,
-        jobject thiz,
-        jobject asset_manager,
-        jstring file_name
-        ) {
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START LOADING SHAPE PRED.");
-
-    const char* fileName = (env)->GetStringUTFChars(file_name, nullptr);
-
-    AAssetManager* native_asset = AAssetManager_fromJava(env, asset_manager);
-    AAsset* assetFile = AAssetManager_open(native_asset, fileName, AASSET_MODE_BUFFER);
-
-    size_t file_length = static_cast<size_t>(AAsset_getLength(assetFile));
-    char* model_buffer = (char *) malloc(file_length);
-
-    AAsset_read(assetFile, model_buffer, file_length);
-    AAsset_close(assetFile);
-
-    membuf mem_buf(model_buffer, model_buffer + file_length);
-    std::istream in(&mem_buf);
-    dlib::deserialize(sp, in);
-
-    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "LOADED SUCCESSFULLY!");
 }
 
 void addNewPosition(JNIEnv* env, jobject thiz, long x, long y) {
@@ -133,6 +105,34 @@ dlib::rectangle bb2rect(JNIEnv* env, jintArray bb) {
     dlib::rectangle rect(x, y, x + w, y + h);
     env->ReleaseIntArrayElements(bb, arr, NULL);
     return rect;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(
+        JNIEnv *env,
+        jobject thiz,
+        jobject asset_manager,
+        jstring file_name
+) {
+    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START LOADING SHAPE PRED.");
+
+    const char* fileName = (env)->GetStringUTFChars(file_name, nullptr);
+
+    AAssetManager* native_asset = AAssetManager_fromJava(env, asset_manager);
+    AAsset* assetFile = AAssetManager_open(native_asset, fileName, AASSET_MODE_BUFFER);
+
+    size_t file_length = static_cast<size_t>(AAsset_getLength(assetFile));
+    char* model_buffer = (char *) malloc(file_length);
+
+    AAsset_read(assetFile, model_buffer, file_length);
+    AAsset_close(assetFile);
+
+    membuf mem_buf(model_buffer, model_buffer + file_length);
+    std::istream in(&mem_buf);
+    dlib::deserialize(sp, in);
+
+    __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "LOADED SUCCESSFULLY!");
 }
 
 extern "C"
