@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         dLibResult.processFrame(image);
         facePainter
                 .setBitmap(image)
-                .drawFaces(dLibResult.getFaces());
+                .drawFacesLandMarks(dLibResult.getFaces());
         return facePainter.getBitmap();
     }
 

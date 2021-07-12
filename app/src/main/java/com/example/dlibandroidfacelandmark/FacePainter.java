@@ -26,7 +26,7 @@ public class FacePainter {
         return this;
     }
 
-    public void drawCircle(float x, float y) {
+    private void drawCircle(float x, float y) {
         this.canvas.drawCircle(x, y, this.radius, this.paint);
     }
 
@@ -42,26 +42,43 @@ public class FacePainter {
         return this.bitmap;
     }
 
-    public void drawPosition(Position p) {
+    private void drawPosition(Position p) {
         drawCircle(
                 (float) p.getX(),
                 (float) p.getY()
         );
     }
 
-    public void drawPositions(ArrayList<Position> positions) {
+    private void drawPositions(ArrayList<Position> positions) {
+        paint.setStyle(Paint.Style.FILL);
         for (Position position: positions)
             drawPosition(position);
     }
 
-    public void drawPositions(Face face) {
+    private void drawPositions(Face face) {
         drawPositions(face.getPositions());
     }
 
-    public void drawFaces(ArrayList<Face> faces) {
+    public FacePainter drawFacesLandMarks(ArrayList<Face> faces) {
         this.clearCanvas();
         for (Face face: faces)
             drawPositions(face);
+        return this;
+    }
+
+    private void drawRectangle(Face face) {
+        this.canvas.drawRect(
+                face.getRectAndroid(),
+                this.paint
+        );
+    }
+
+    public FacePainter drawFacesBoundingBox(ArrayList<Face> faces) {
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setStrokeWidth(this.radius);
+        for (Face face: faces)
+            this.drawRectangle(face);
+        return this;
     }
 
     public void clearCanvas() {

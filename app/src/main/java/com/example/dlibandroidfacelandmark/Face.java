@@ -35,9 +35,17 @@ public class Face {
         return this.positions;
     }
 
+    public android.graphics.Rect getRectAndroid() {
+        int r, t, l, b;
+        r = this.rect.x;
+        t = this.rect.y;
+        l = this.rect.width  + r;
+        b = this.rect.height + t;
+        return new android.graphics.Rect(l, t, r, b);
+    }
+
     public void addPosition(int x, int y) {
-        Position p = new Position(x, y);
-        this.positions.add(p);
+        this.positions.add(new Position(x, y));
     }
 
     public ArrayList<Position> getChin() {
