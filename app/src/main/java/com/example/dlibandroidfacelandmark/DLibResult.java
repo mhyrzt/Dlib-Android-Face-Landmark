@@ -3,14 +3,10 @@ package com.example.dlibandroidfacelandmark;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.os.Environment;
-import android.util.Log;
 
 import org.opencv.core.Rect;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class DLibResult {
@@ -25,8 +21,8 @@ public class DLibResult {
     private ArrayList<Face> faces;
 
     DLibResult(Context AppContext, String fileName) {
-        positions  = new ArrayList<Position>();
-        this.faces = new ArrayList<Face>();
+        positions  = new ArrayList<>();
+        this.faces = new ArrayList<>();
         setupOpenCv(AppContext);
         setupDlib(AppContext.getAssets(), fileName);
     }
@@ -49,13 +45,14 @@ public class DLibResult {
     }
 
     private void detectFaces(Bitmap image) {
-        ArrayList<Rect> rects = faceDetector.detectFaces(image);
-        for (Rect r: rects) {
+        faces.clear();
+        for (Rect r: faceDetector.detectFaces(image)) {
             this.positions.clear();
             Face face = new Face(r);
             processLandMarks(image, face.getBoundingBox());
             face.setPositions(this.positions);
-            this.faces.add(face);
+            faces.add(face);
+            positions.clear();
         }
     }
 
@@ -64,7 +61,6 @@ public class DLibResult {
     }
 
     public void processFrame(Bitmap image) {
-        this.positions.clear();
         detectFaces(image);
     }
 

@@ -81,7 +81,7 @@ Java_com_example_dlibandroidfacelandmark_DLibResult_setupDlib(
         ) {
     __android_log_print(ANDROID_LOG_VERBOSE, TAG, "%s", "START LOADING SHAPE PRED.");
 
-    const char* fileName = (env)->GetStringUTFChars(file_name, NULL);
+    const char* fileName = (env)->GetStringUTFChars(file_name, nullptr);
 
     AAssetManager* native_asset = AAssetManager_fromJava(env, asset_manager);
     AAsset* assetFile = AAssetManager_open(native_asset, fileName, AASSET_MODE_BUFFER);
@@ -126,8 +126,7 @@ void addFaceLandmarks(
 }
 
 dlib::rectangle bb2rect(JNIEnv* env, jintArray bb) {
-    jsize len = env->GetArrayLength(bb);
-    jint* arr = env->GetIntArrayElements(bb, NULL);
+    jint* arr = env->GetIntArrayElements(bb, nullptr);
     long x, y, w, h, i = 0;
     x = arr[i++]; y = arr[i++];
     w = arr[i++]; h = arr[i++];

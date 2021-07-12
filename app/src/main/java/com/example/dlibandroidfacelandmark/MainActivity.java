@@ -1,48 +1,33 @@
 package com.example.dlibandroidfacelandmark;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.dlibandroidfacelandmark.databinding.ActivityMainBinding;
-
-import com.otaliastudios.cameraview.BitmapCallback;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Mode;
 import com.otaliastudios.cameraview.frame.Frame;
-import com.otaliastudios.cameraview.frame.FrameProcessor;
 import com.otaliastudios.cameraview.size.Size;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private final String TAG = "MainActivity";
     private final Handler handler = new Handler();
-    private final String shape_pred_file = "shape_predictor_68_face_landmarks_GTX.dat";
     private boolean facing = true;
     private ImageView processingResult;
     private CameraView camera;
@@ -67,13 +51,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         getFilesDir();
-        dLibResult = new DLibResult(this, shape_pred_file);
+        dLibResult = new DLibResult(
+                this,
+                "shape_predictor_68_face_landmarks_GTX.dat"
+        );
         startCamera();
     }
 
     private void startCamera() {
-        processingResult = (ImageView) findViewById(R.id.resultProcess);
-        camera = (CameraView) findViewById(R.id.camera);
+        processingResult = findViewById(R.id.resultProcess);
+        camera = findViewById(R.id.camera);
         camera.setLifecycleOwner(this);
 
         camera.setMode(Mode.PICTURE);
@@ -87,13 +74,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void facingButtonClickListener() {
-        Button btnFacing = (Button) findViewById(R.id.cameraChange);
-        btnFacing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeFacing();
-            }
-        });
+        findViewById(R.id.cameraChange)
+                .setOnClickListener(v -> changeFacing());
     }
 
     private Bitmap conv2NV21(Frame frame) {
@@ -116,14 +98,10 @@ public class MainActivity extends AppCompatActivity {
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
                 super.onPictureTaken(result);
 
-                result.toBitmap(4096, 4096, new BitmapCallback() {
-                    @Override
-                    public void onBitmapReady(@Nullable @org.jetbrains.annotations.Nullable Bitmap bitmap) {
-                        if (null == bitmap) return;
-                        Bitmap result = processLandmarks(bitmap);
-                        showResultLayOut(result);
-                    }
-
+                result.toBitmap(4096, 4096, bitmap -> {
+                    if (null == bitmap) return;
+                    Bitmap result1 = processLandmarks(bitmap);
+                    showResultLayOut(result1);
                 });
             }
 
@@ -136,13 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void captureButtinClickListener() {
         setupCamerClickListener();
-        Button btnCapture = (Button) findViewById(R.id.btnCapture);
-        btnCapture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                camera.takePicture();
-            }
-        });
+        findViewById(R.id.btnCapture)
+                .setOnClickListener(v -> camera.takePicture());
     }
 
     private void changeFacing() {
@@ -153,11 +126,8 @@ public class MainActivity extends AppCompatActivity {
     private void setFrameProcessor() {
         this.camera.setFrameProcessingExecutors(4);
         this.camera.setFrameProcessingPoolSize(5);
-        this.camera.addFrameProcessor(new FrameProcessor() {
-            @Override
-            public void process(@NonNull @NotNull Frame frame) {
+        this.camera.addFrameProcessor(frame -> {
 //                camera.takePicture();
-            }
         });
     }
 
@@ -187,13 +157,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearButtonClickListener() {
-        Button btnClear = (Button) findViewById(R.id.btnClear);
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                processingResult.setImageResource(0);
-            }
-        });
+        Button btnClear = findViewById(R.id.btnClear);
+        btnClear.setOnClickListener(v ->
+                processingResult.setImageResource(0)
+        );
     }
 
 }
