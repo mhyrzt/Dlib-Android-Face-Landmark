@@ -125,22 +125,15 @@ void addFaceLandmarks(
 
 }
 
-std::vector<dlib::rectangle> bb2rect(JNIEnv* env, jintArray bb) {
-    std::vector<dlib::rectangle> rects;
+dlib::rectangle bb2rect(JNIEnv* env, jintArray bb) {
     jsize len = env->GetArrayLength(bb);
     jint* arr = env->GetIntArrayElements(bb, NULL);
-    long x, y, w, h, i, j;
-    for (i = 0; i < len / 4; i++) {
-        j = i * 4;
-        x = arr[j++];
-        y = arr[j++];
-        w = arr[j++];
-        h = arr[j++];
-        dlib::rectangle rect(x, y, x + w, y + h);
-        rects.push_back(rect);
-    }
+    long x, y, w, h, i = 0;
+    x = arr[i++]; y = arr[i++];
+    w = arr[i++]; h = arr[i++];
+    dlib::rectangle rect(x, y, x + w, y + h);
     env->ReleaseIntArrayElements(bb, arr, NULL);
-    return rects;
+    return rect;
 }
 
 extern "C"
@@ -152,10 +145,8 @@ Java_com_example_dlibandroidfacelandmark_DLibResult_processLandMarks(
         jintArray bb
 ) {
 
-    dlib::array2d<unsigned char> img;
+    dlib::array2d<unsigned char> img; // unsigned char -> byte
     bitmap2Array2dGrayScale(env, bitmap, img);
-    std::vector<dlib::rectangle> rects = bb2rect(env, bb);
-
-    for (dlib::rectangle det: rects)
-        addFaceLandmarks(env, thiz, img, det);
+    dlib::rectangle rect = bb2rect(env, bb);
+    addFaceLandmarks(env, thiz, img, rect);
 }

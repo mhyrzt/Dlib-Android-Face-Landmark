@@ -23,8 +23,12 @@ public class Face {
         this.boundingBox[3] = this.rect.height;
     }
 
+    public int[] getBoundingBox() {
+        return this.boundingBox;
+    }
+
     public void setPositions(ArrayList<Position> positions) {
-        this.positions = positions;
+        this.positions = new ArrayList<Position>(positions);
     }
 
     public ArrayList<Position> getPositions() {

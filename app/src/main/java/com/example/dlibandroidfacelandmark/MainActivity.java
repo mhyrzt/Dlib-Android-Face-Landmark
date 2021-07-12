@@ -162,16 +162,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Bitmap processLandmarks(Bitmap image) {
-        this.dLibResult.processFrame(image);
         Bitmap bitmap = image.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
         Paint  paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.RED);
-        for (Position p: dLibResult.getPositions()){
-            float x = (float) p.getX() * 2;
-            float y = (float) p.getY() * 2;
-            canvas.drawCircle(x, y, 10, paint);
-        }
+        
+        dLibResult.processFrame(image);
+        for (Face f: dLibResult.getFaces())
+            for (Position p: f.getPositions())
+                canvas.drawCircle(
+                        (float) p.getX() * 2,
+                        (float) p.getY() * 2,
+                        5,
+                        paint
+                );
+
+
         return bitmap;
     }
 
