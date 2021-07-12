@@ -11,7 +11,7 @@ public class Face {
 
     Face(Rect rect) {
         setBoundingBox(rect);
-        this.positions = new ArrayList<Position>();
+        this.positions = new ArrayList<>();
     }
 
     private void setBoundingBox(Rect r) {
@@ -28,7 +28,7 @@ public class Face {
     }
 
     public void setPositions(ArrayList<Position> positions) {
-        this.positions = new ArrayList<Position>(positions);
+        this.positions = new ArrayList<>(positions);
     }
 
     public ArrayList<Position> getPositions() {
@@ -39,4 +39,33 @@ public class Face {
         Position p = new Position(x, y);
         this.positions.add(p);
     }
+
+    public ArrayList<Position> getChin() {
+        return (ArrayList<Position>) this.positions.subList(0, 17);
+    }
+
+    public ArrayList<Position> getRightEyeBrow() {
+        return (ArrayList<Position>) this.positions.subList(17, 22);
+    }
+
+    public ArrayList<Position> getLeftEyeBrow() {
+        return (ArrayList<Position>) this.positions.subList(22, 27);
+    }
+
+    public ArrayList<Position> getNose() {
+        return (ArrayList<Position>) this.positions.subList(28, 36);
+    }
+
+    public ArrayList<Position> getRightEye() {
+        return (ArrayList<Position>) this.positions.subList(36, 42);
+    }
+
+    public ArrayList<Position> getLeftEye() {
+        return (ArrayList<Position>) this.positions.subList(42, 48);
+    }
+
+    public ArrayList<Position> getMouth() {
+        return (ArrayList<Position>) this.positions.subList(49, 68);
+    }
+
 }
