@@ -10,12 +10,12 @@ public class Face {
     private int[] boundingBox;
 
     Face(Rect rect) {
-        this.rect = rect;
+        setBoundingBox(rect);
         this.positions = new ArrayList<Position>();
-        setBoundingBox();
     }
 
-    private void setBoundingBox() {
+    private void setBoundingBox(Rect r) {
+        this.rect = r;
         this.boundingBox    = new int[4];
         this.boundingBox[0] = this.rect.x;
         this.boundingBox[1] = this.rect.y;

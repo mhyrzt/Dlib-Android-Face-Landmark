@@ -45,6 +45,7 @@ public class DLibResult {
     public ArrayList<Position> getPositions() {
         return positions;
     }
+
     private int[] detectBB(Bitmap image) {
         ArrayList<Rect> rects = faceDetector.detectFaces(image);
         int[] bb = new int[rects.size() * 4];
