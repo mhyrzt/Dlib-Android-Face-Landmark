@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 
 import java.util.ArrayList;
 
@@ -79,6 +80,31 @@ public class FacePainter {
         for (Face face: faces)
             this.drawRectangle(face);
         return this;
+    }
+
+    public void drawPolygon(ArrayList<Position> positions, int color) {
+        int prevColor = this.paint.getColor();
+        this.paint.setColor(color);
+
+        Path path = new Path();
+        path.moveTo(
+                (float) positions.get(0).getX(),
+                (float) positions.get(0).getY()
+        );
+        for (int i = 1; i < positions.size(); i++)
+            path.lineTo(
+                    (float) positions.get(i).getX(),
+                    (float) positions.get(i).getY()
+            );
+
+        path.close();
+        this.canvas.drawPath(path, this.paint);
+
+        this.paint.setColor(prevColor);
+    }
+
+    public void drawPolygon(ArrayList<Position> positions) {
+        this.drawPolygon(positions, this.paint.getColor());
     }
 
     public void clearCanvas() {
