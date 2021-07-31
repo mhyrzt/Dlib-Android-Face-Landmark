@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditFaceActivity">
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="@dimen/color_text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:text="ALPHA"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/alphaSeekbar"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="@dimen/color_text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:text="BLUE"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/blueSeekbar"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="@dimen/color_text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:text="GREEN"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/greenSeekbar"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <SeekBar
+        android:id="@+id/alphaSeekbar"
+        android:layout_width="194dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/seek_bar_right_margin"
+        android:max="255"
+        android:progressTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/blueSeekbar" />
+
+    <SeekBar
+        android:id="@+id/blueSeekbar"
+        android:layout_width="194dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/seek_bar_right_margin"
+        android:max="255"
+        android:progressTint="#0000FF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/greenSeekbar" />
+
+    <SeekBar
+        android:id="@+id/greenSeekbar"
+        android:layout_width="194dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/seek_bar_right_margin"
+        android:max="255"
+        android:progressTint="#00FF00"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/redSeekBar" />
+
+    <SeekBar
+        android:id="@+id/redSeekBar"
+        android:layout_width="194dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="@dimen/seek_bar_right_margin"
+        android:max="255"
+        android:progressTint="#FF0000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="353dp"
+        android:layout_height="299dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="@dimen/color_text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="RED"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/redSeekBar"
+        app:layout_constraintTop_toTopOf="@+id/redSeekBar" />
+
+    <TextView
+        android:id="@+id/test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="182dp"
+        android:layout_marginEnd="171dp"
+        android:layout_marginBottom="197dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
