@@ -15,10 +15,10 @@ public class FacePainter {
     private int radius;
 
     FacePainter() {
-        canvas = new Canvas();
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.RED);
         this.radius = 5;
+        this.canvas = new Canvas();
+        this.paint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+        this.paint.setColor(Color.RED);
     }
 
     public FacePainter setBitmap(Bitmap bitmap) {
@@ -80,6 +80,7 @@ public class FacePainter {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(this.radius);
         this.paint.setColor(Color.GREEN);
+
         for (Face face: faces)
             this.drawRectangle(face);
         return this;
@@ -111,6 +112,6 @@ public class FacePainter {
     }
 
     public void clearCanvas() {
-        this.canvas.drawColor(Color.TRANSPARENT);
+        this.canvas.drawColor(Color.BLACK);
     }
 }

@@ -1,7 +1,12 @@
 package com.example.dlibandroidfacelandmark;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class EditFaceActivity extends AppCompatActivity {
@@ -69,12 +76,14 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void updateImageView() {
         this.facePainter.clearCanvas();
+        this.facePainter.setBitmap(this.image);
         imageView.setImageBitmap(this.facePainter.getBitmap());
-
         if (drawLandmarks)
             this.facePainter.drawFacesLandMarks(this.faces);
+
         if (boundingBox)
             this.facePainter.drawFacesBoundingBox(this.faces);
+
     }
 
     private void setChangeListener(SeekBar seekBar) {
@@ -136,6 +145,46 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void saveImage() {
-        Toast.makeText(this, "image saved", Toast.LENGTH_SHORT).show();
+        requestStoragePermission();
+    }
+    private boolean hasWritePermission() {
+        return ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestStoragePermission() {
+        if (!hasWritePermission()) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    },
+                    1
+            );
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(
+                        this,
+                        "Permission Granted",
+                        Toast.LENGTH_LONG
+                ).show();
+            } else {
+                Toast.makeText(
+                        this,
+                        "Permission Denied",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        }
     }
 }
