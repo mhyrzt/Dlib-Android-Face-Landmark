@@ -2,14 +2,13 @@ package com.example.dlibandroidfacelandmark;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,10 +17,16 @@ public class EditFaceActivity extends AppCompatActivity {
     private SeekBar r, g, b, a;
     private int vr, vg, vb, va;
     private static final String TAG = "EditFaceActivity";
+
     private FacePainter facePainter;
     private Bitmap image;
     private ArrayList<Face> faces;
+
     private ImageView imageView;
+    private CheckBox drawLandmarksCheckbox; private boolean drawLandmarks = false;
+    private CheckBox drawBoundingBoxCheckBox; private boolean boundingBox = false;
+    private Button saveBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +35,7 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void setup() {
+        setupWidgets();
         setupSeekBars();
         setupFacePaint();
     }
@@ -45,19 +51,30 @@ public class EditFaceActivity extends AppCompatActivity {
         setChangeListener(a);
     }
 
+    private void setupWidgets() {
+        saveBtn     = (Button) findViewById(R.id.saveBtn);
+        imageView   = (ImageView) findViewById(R.id.imageView);
+        drawLandmarksCheckbox   = (CheckBox) findViewById(R.id.drawLandmarksCheckBox);
+        drawBoundingBoxCheckBox = (CheckBox) findViewById(R.id.boundingBoxCheckBox);
+        setupListeners();
+    }
+
     private void setupFacePaint() {
-        imageView = (ImageView) findViewById(R.id.imageView);
-        Bitmap image;
-        ArrayList<Face> faces;
-        image = GlobalVars.image;
-        faces = GlobalVars.faces;
+        this.image = GlobalVars.image;
+        this.faces = GlobalVars.faces;
         this.facePainter = new FacePainter();
-        facePainter.setBitmap(image);
+        facePainter.setBitmap(this.image);
         updateImageView();
     }
 
     private void updateImageView() {
+        this.facePainter.clearCanvas();
         imageView.setImageBitmap(this.facePainter.getBitmap());
+
+        if (drawLandmarks)
+            this.facePainter.drawFacesLandMarks(this.faces);
+        if (boundingBox)
+            this.facePainter.drawFacesBoundingBox(this.faces);
     }
 
     private void setChangeListener(SeekBar seekBar) {
@@ -68,35 +85,57 @@ public class EditFaceActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
     private void updateValue(SeekBar seekBar, int progress) {
-        String name = "";
         switch (seekBar.getId()) {
             case R.id.redSeekBar:
-                name = "r";
                 vr = progress;
                 break;
             case R.id.greenSeekbar:
-                name = "g";
                 vg = progress;
                 break;
             case R.id.blueSeekbar:
-                name = "b";
                 vb = progress;
                 break;
             case R.id.alphaSeekbar:
-                name = "a";
                 va = progress;
                 break;
         }
+    }
 
-        String log = name.toUpperCase() + "\n" + progress + "\n" + String.format("(%d, %d, %d, %d)", vr, vg, vb, va);
-        ((TextView) findViewById(R.id.test)).setText(log);
+    private void setupListeners() {
+        setupSaveButton();
+        setupDrawBoundinBoxCheckBox();
+        setupDrawLandmarksCheckBoxListener();
+    }
+
+    private void setupDrawLandmarksCheckBoxListener() {
+        this.drawLandmarksCheckbox.setOnClickListener(v -> {
+            drawLandmarks = drawLandmarksCheckbox.isChecked();
+            updateImageView();
+        });
+    }
+
+    private void setupDrawBoundinBoxCheckBox() {
+        this.drawBoundingBoxCheckBox.setOnClickListener(v -> {
+            boundingBox = drawBoundingBoxCheckBox.isChecked();
+            updateImageView();
+        });
+    }
+
+    private void setupSaveButton() {
+        this.saveBtn.setOnClickListener(v -> {
+            saveImage();
+        });
+    }
+
+    private void saveImage() {
+        Toast.makeText(this, "image saved", Toast.LENGTH_SHORT).show();
     }
 }

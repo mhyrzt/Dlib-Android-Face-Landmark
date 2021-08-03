@@ -45,8 +45,8 @@ public class FacePainter {
 
     private void drawPosition(Position p) {
         drawCircle(
-                (float) p.getX(),
-                (float) p.getY()
+                (float) p.getX() * 2,
+                (float) p.getY() * 2
         );
     }
 
@@ -61,7 +61,9 @@ public class FacePainter {
     }
 
     public FacePainter drawFacesLandMarks(ArrayList<Face> faces) {
-        this.clearCanvas();
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setStrokeWidth(this.radius);
+        this.paint.setColor(Color.RED);
         for (Face face: faces)
             drawPositions(face);
         return this;
@@ -77,6 +79,7 @@ public class FacePainter {
     public FacePainter drawFacesBoundingBox(ArrayList<Face> faces) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(this.radius);
+        this.paint.setColor(Color.GREEN);
         for (Face face: faces)
             this.drawRectangle(face);
         return this;
