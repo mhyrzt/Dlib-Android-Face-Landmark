@@ -1,5 +1,6 @@
 package com.example.dlibandroidfacelandmark;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,6 +21,10 @@ import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Mode;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
                 result.toBitmap(4096, 4096, bitmap -> {
                     if (null == bitmap) return;
-                    Bitmap result1 = processLandmarks(bitmap);
-                    showResultLayOut(result1);
+                    // showResultLayOut(processLandmarks(bitmap));
+                    navigateToFaceEditActivity(bitmap);
                 });
             }
 
@@ -127,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
         btnClear.setOnClickListener(v ->
                 processingResult.setImageResource(0)
         );
+    }
+
+    private void navigateToFaceEditActivity(Bitmap bitmap) {
+        this.dLibResult.processFrame(bitmap);
+        GlobalVars.image = bitmap;
+        GlobalVars.faces = this.dLibResult.getFaces();
+        Intent intent = new Intent(MainActivity.this, EditFaceActivity.class);
+        startActivity(intent);
     }
 
 }

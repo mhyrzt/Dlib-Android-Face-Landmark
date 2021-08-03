@@ -2,16 +2,26 @@ package com.example.dlibandroidfacelandmark;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class EditFaceActivity extends AppCompatActivity {
     private SeekBar r, g, b, a;
     private int vr, vg, vb, va;
     private static final String TAG = "EditFaceActivity";
+    private FacePainter facePainter;
+    private Bitmap image;
+    private ArrayList<Face> faces;
+    private ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,14 +30,34 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void setup() {
+        setupSeekBars();
+        setupFacePaint();
+    }
+
+    private void setupSeekBars() {
         r = (SeekBar) findViewById(R.id.redSeekBar);
-        g = (SeekBar) findViewById(R.id.greenSeekbar);
         b = (SeekBar) findViewById(R.id.blueSeekbar);
+        g = (SeekBar) findViewById(R.id.greenSeekbar);
         a = (SeekBar) findViewById(R.id.alphaSeekbar);
         setChangeListener(r);
         setChangeListener(g);
         setChangeListener(b);
         setChangeListener(a);
+    }
+
+    private void setupFacePaint() {
+        imageView = (ImageView) findViewById(R.id.imageView);
+        Bitmap image;
+        ArrayList<Face> faces;
+        image = GlobalVars.image;
+        faces = GlobalVars.faces;
+        this.facePainter = new FacePainter();
+        facePainter.setBitmap(image);
+        updateImageView();
+    }
+
+    private void updateImageView() {
+        imageView.setImageBitmap(this.facePainter.getBitmap());
     }
 
     private void setChangeListener(SeekBar seekBar) {
