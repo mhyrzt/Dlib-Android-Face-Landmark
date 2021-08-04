@@ -48,32 +48,36 @@ public class Face {
         this.positions.add(new Position(x, y));
     }
 
+    private ArrayList<Position> subList(int start, int end) {
+        return new ArrayList<Position>(this.positions.subList(start, end));
+    }
+
     public ArrayList<Position> getChin() {
-        return (ArrayList<Position>) this.positions.subList(0, 17);
+        return subList(0, 17);
     }
 
     public ArrayList<Position> getRightEyeBrow() {
-        return (ArrayList<Position>) this.positions.subList(17, 22);
+        return subList(17, 22);
     }
 
     public ArrayList<Position> getLeftEyeBrow() {
-        return (ArrayList<Position>) this.positions.subList(22, 27);
+        return subList(22, 27);
     }
 
     public ArrayList<Position> getNose() {
-        return (ArrayList<Position>) this.positions.subList(28, 36);
+        return subList(28, 36);
     }
 
     public ArrayList<Position> getRightEye() {
-        return (ArrayList<Position>) this.positions.subList(36, 42);
+        return subList(36, 42);
     }
 
     public ArrayList<Position> getLeftEye() {
-        return (ArrayList<Position>) this.positions.subList(42, 48);
+        return subList(42, 48);
     }
 
     public ArrayList<Position> getMouth() {
-        return (ArrayList<Position>) this.positions.subList(49, 68);
+        return subList(49, 61);
     }
 
 }

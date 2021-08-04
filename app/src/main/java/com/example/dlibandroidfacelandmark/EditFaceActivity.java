@@ -75,15 +75,32 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void updateImageView() {
+        resetImageView();
+        handleCheckBoxes();
+        drawLips();
+    }
+
+    private void resetImageView() {
         this.facePainter.clearCanvas();
         this.facePainter.setBitmap(this.image);
         imageView.setImageBitmap(this.facePainter.getBitmap());
+    }
+
+    private void handleCheckBoxes() {
         if (drawLandmarks)
             this.facePainter.drawFacesLandMarks(this.faces);
 
         if (boundingBox)
             this.facePainter.drawFacesBoundingBox(this.faces);
+    }
 
+    private void drawLips() {
+        for (Face face: this.faces) {
+            this.facePainter.drawPolygon(
+                    face.getMouth(),
+                    FacePainter.getRGBA(vr, vg, vb, va)
+            );
+        }
     }
 
     private void setChangeListener(SeekBar seekBar) {
@@ -116,6 +133,7 @@ public class EditFaceActivity extends AppCompatActivity {
                 va = progress;
                 break;
         }
+        updateImageView();
     }
 
     private void setupListeners() {
@@ -147,6 +165,7 @@ public class EditFaceActivity extends AppCompatActivity {
     private void saveImage() {
         requestStoragePermission();
     }
+
     private boolean hasWritePermission() {
         return ContextCompat
                 .checkSelfPermission(
@@ -169,22 +188,18 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(
-                        this,
-                        "Permission Granted",
-                        Toast.LENGTH_LONG
-                ).show();
-            } else {
-                Toast.makeText(
-                        this,
-                        "Permission Denied",
-                        Toast.LENGTH_LONG
-                ).show();
-            }
+            if (
+                    grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {}
+            else {}
         }
     }
 }

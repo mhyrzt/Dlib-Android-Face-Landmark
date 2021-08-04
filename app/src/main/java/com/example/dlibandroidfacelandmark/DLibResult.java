@@ -5,9 +5,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 
 import org.opencv.core.Rect;
-
+import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
-
 
 public class DLibResult {
 
@@ -25,6 +24,7 @@ public class DLibResult {
         this.faces = new ArrayList<>();
         setupOpenCv(AppContext);
         setupDlib(AppContext.getAssets(), fileName);
+
     }
 
     public void addPosition(int x, int y) {

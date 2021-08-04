@@ -87,24 +87,22 @@ public class FacePainter {
     }
 
     public void drawPolygon(ArrayList<Position> positions, int color) {
-        int prevColor = this.paint.getColor();
         this.paint.setColor(color);
+        this.paint.setStyle(Paint.Style.FILL);
 
         Path path = new Path();
         path.moveTo(
-                (float) positions.get(0).getX(),
-                (float) positions.get(0).getY()
+                (float) positions.get(0).getX() * 2,
+                (float) positions.get(0).getY() * 2
         );
         for (int i = 1; i < positions.size(); i++)
             path.lineTo(
-                    (float) positions.get(i).getX(),
-                    (float) positions.get(i).getY()
+                    (float) positions.get(i).getX() * 2,
+                    (float) positions.get(i).getY() * 2
             );
-
         path.close();
-        this.canvas.drawPath(path, this.paint);
 
-        this.paint.setColor(prevColor);
+        this.canvas.drawPath(path, this.paint);
     }
 
     public void drawPolygon(ArrayList<Position> positions) {
@@ -114,4 +112,14 @@ public class FacePainter {
     public void clearCanvas() {
         this.canvas.drawColor(Color.BLACK);
     }
+
+    public static int getRGBA(int r, int g, int b, int a) {
+        a = (a & 0xff) << 24;
+        r = (r & 0xff) << 16;
+        g = (g & 0xff) << 8;
+        b = (b & 0xff);
+        return r | g | b | a;
+    }
+
+
 }
