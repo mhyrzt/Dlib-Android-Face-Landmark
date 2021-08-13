@@ -1,17 +1,30 @@
 package com.example.dlibandroidfacelandmark;
 
+import static org.opencv.core.CvType.CV_8UC1;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class FacePainter {
     private Canvas canvas;
     private Paint paint;
     private Bitmap bitmap;
+
     private int radius;
 
     FacePainter() {
@@ -121,5 +134,103 @@ public class FacePainter {
         return r | g | b | a;
     }
 
+    private MatOfPoint getMatPoints(ArrayList<Position> positions) {
+        MatOfPoint matOfPoint = new MatOfPoint();
+        List<Point> points = new ArrayList<>();
+        for (Position position: positions)
+            points.add(new Point(position.getX(), position.getY()));
+        matOfPoint.fromList(points);
+        return matOfPoint;
+    }
+
+
+    private Mat applyMaskToMat(Mat mask) {
+        Mat image = bitmap2Mat();
+        Mat matResult = new Mat();
+        Core.multiply(mask, image, matResult);
+        return matResult;
+    }
+
+    private Mat bitmap2Mat() {
+        Mat image = new Mat();
+        Utils.bitmapToMat(this.bitmap, image);
+        return image;
+    }
+
+    private Mat getMask(ArrayList<Position> positions) {
+        Size size = new Size(this.bitmap.getWidth(), this.bitmap.getHeight());
+
+        Mat temp = new Mat();
+
+        Mat mask = Mat.zeros(
+               size,
+                CV_8UC1
+        );
+
+        Imgproc.fillConvexPoly(
+                mask,
+                getMatPoints(positions),
+                new Scalar(255, 255, 255)
+        );
+
+        Mat kernel = Imgproc.getStructuringElement(
+                Imgproc.MORPH_RECT,
+                new Size(40, 40)
+        );
+
+        Imgproc.morphologyEx(
+                mask,
+                temp,
+                Imgproc.MORPH_CLOSE,
+                kernel
+        );
+
+        Imgproc.GaussianBlur(
+                temp,
+                mask,
+                new Size(15, 15),
+                Core.BORDER_DEFAULT
+        );
+
+        return mask;
+    }
+
+    private Mat getInvMask(ArrayList<Position> positions){
+        Mat mask = getMask(positions);
+        Mat invMask = new Mat();
+        Core.bitwise_not(mask, invMask);
+        return invMask;
+    }
+
+    private Mat applyInvMask(ArrayList<Position> positions){
+        Mat invMask = getInvMask(positions);
+        return applyMaskToMat(invMask);
+    }
+
+    private Mat applyMask(ArrayList<Position> positions) {
+        Mat mask  = getMask(positions);
+        return applyMaskToMat(mask);
+    }
+
+    public Bitmap applyMaskColor(ArrayList<Position> positions, int r, int g, int b, int a) {
+        Mat mask  = applyMask(positions);
+        Scalar color = new Scalar(b, g, r, a);
+        Mat out_mask = new Mat();
+        Core.multiply(mask, color, out_mask);
+
+        Mat invm  = applyInvMask(positions);
+        Mat image = new Mat();
+        Mat out_invm = new Mat();
+        Utils.bitmapToMat(this.bitmap, image);
+        Core.multiply(invm, image, out_invm);
+
+        Mat result = new Mat();
+        Core.add(out_invm, out_mask, result);
+
+        Bitmap ans = Bitmap.createBitmap(this.bitmap);
+        Utils.matToBitmap(result, ans);
+
+        return ans;
+    }
 
 }
