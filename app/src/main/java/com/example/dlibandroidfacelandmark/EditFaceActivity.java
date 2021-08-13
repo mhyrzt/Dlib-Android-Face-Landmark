@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -76,8 +77,8 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void updateImageView() {
         resetImageView();
-        handleCheckBoxes();
         drawLips();
+        handleCheckBoxes();
     }
 
     private void resetImageView() {
@@ -96,7 +97,7 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void drawLips() {
         for (Face face: this.faces) {
-            this.facePainter.drawPolygon(
+            this.facePainter.drawMask(
                     face.getMouth(),
                     FacePainter.getRGBA(vr, vg, vb, va)
             );

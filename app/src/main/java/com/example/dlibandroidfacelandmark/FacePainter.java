@@ -1,12 +1,17 @@
 package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC4;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Build;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -24,7 +29,7 @@ public class FacePainter {
     private Canvas canvas;
     private Paint paint;
     private Bitmap bitmap;
-
+    private static final String TAG = "FacePainter";
     private int radius;
 
     FacePainter() {
@@ -143,24 +148,11 @@ public class FacePainter {
         return matOfPoint;
     }
 
-
-    private Mat applyMaskToMat(Mat mask) {
-        Mat image = bitmap2Mat();
-        Mat matResult = new Mat();
-        Core.multiply(mask, image, matResult);
-        return matResult;
-    }
-
-    private Mat bitmap2Mat() {
-        Mat image = new Mat();
-        Utils.bitmapToMat(this.bitmap, image);
-        return image;
-    }
-
     private Mat getMask(ArrayList<Position> positions) {
-        Size size = new Size(this.bitmap.getWidth(), this.bitmap.getHeight());
-
-        Mat temp = new Mat();
+        Size size = new Size(
+                this.bitmap.getWidth(),
+                this.bitmap.getHeight()
+        );
 
         Mat mask = Mat.zeros(
                size,
@@ -180,13 +172,13 @@ public class FacePainter {
 
         Imgproc.morphologyEx(
                 mask,
-                temp,
+                mask,
                 Imgproc.MORPH_CLOSE,
                 kernel
         );
 
         Imgproc.GaussianBlur(
-                temp,
+                mask,
                 mask,
                 new Size(15, 15),
                 Core.BORDER_DEFAULT
@@ -195,42 +187,39 @@ public class FacePainter {
         return mask;
     }
 
-    private Mat getInvMask(ArrayList<Position> positions){
-        Mat mask = getMask(positions);
-        Mat invMask = new Mat();
-        Core.bitwise_not(mask, invMask);
-        return invMask;
+    private Bitmap mat2Bmp(Mat mat) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                mat.cols(),
+                mat.rows(),
+                Bitmap.Config.ARGB_8888
+        );
+        Utils.matToBitmap(mat, bitmap);
+        return bitmap;
     }
 
-    private Mat applyInvMask(ArrayList<Position> positions){
-        Mat invMask = getInvMask(positions);
-        return applyMaskToMat(invMask);
+    private void replaceMaskColor(Bitmap bitmap, int argb) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        for (int r = 0; r < h; r++) {
+            for (int c = 0; c < w; c++) {
+                int pixel = bitmap.getPixel(c, r);
+                if (
+                        Color.red(pixel) == 255
+                        && Color.blue(pixel) == 255
+                        && Color.green(pixel) == 255
+                        && Color.alpha(pixel) == 1
+                ) {
+                    bitmap.setPixel(c, r, argb);
+                } else {
+                    bitmap.setPixel(c, r, 0);
+                }
+            }
+        }
     }
 
-    private Mat applyMask(ArrayList<Position> positions) {
-        Mat mask  = getMask(positions);
-        return applyMaskToMat(mask);
+    public void drawMask(ArrayList<Position> positions, int color) {
+        Bitmap mask = mat2Bmp(getMask(positions));
+        replaceMaskColor(mask, color);
+        canvas.setBitmap(mask);
     }
-
-    public Bitmap applyMaskColor(ArrayList<Position> positions, int r, int g, int b, int a) {
-        Mat mask  = applyMask(positions);
-        Scalar color = new Scalar(b, g, r, a);
-        Mat out_mask = new Mat();
-        Core.multiply(mask, color, out_mask);
-
-        Mat invm  = applyInvMask(positions);
-        Mat image = new Mat();
-        Mat out_invm = new Mat();
-        Utils.bitmapToMat(this.bitmap, image);
-        Core.multiply(invm, image, out_invm);
-
-        Mat result = new Mat();
-        Core.add(out_invm, out_mask, result);
-
-        Bitmap ans = Bitmap.createBitmap(this.bitmap);
-        Utils.matToBitmap(result, ans);
-
-        return ans;
-    }
-
 }

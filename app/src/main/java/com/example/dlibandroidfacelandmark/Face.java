@@ -77,7 +77,7 @@ public class Face {
     }
 
     public ArrayList<Position> getMouth() {
-        return subList(49, 61);
+        return subList(49, 60);
     }
 
 }
