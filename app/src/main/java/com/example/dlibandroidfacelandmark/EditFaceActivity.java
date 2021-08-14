@@ -96,11 +96,9 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void drawLips() {
+        int color = FacePainter.getRGBA(vr, vg, vb, va);
         for (Face face: this.faces) {
-            this.facePainter.drawMask(
-                    face.getMouth(),
-                    FacePainter.getRGBA(vr, vg, vb, va)
-            );
+            this.facePainter.drawMask(face, color);
         }
     }
 

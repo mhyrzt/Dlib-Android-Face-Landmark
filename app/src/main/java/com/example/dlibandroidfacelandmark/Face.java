@@ -1,17 +1,31 @@
 package com.example.dlibandroidfacelandmark;
 
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Face {
     private Rect rect;
     private ArrayList<Position> positions;
     private int[] boundingBox;
+    private Mat mask;
 
     Face(Rect rect) {
         setBoundingBox(rect);
         this.positions = new ArrayList<>();
+    }
+
+    Face(Rect rect, Mat mask) {
+        this(rect);
+        this.mask = mask;
     }
 
     private void setBoundingBox(Rect r) {
@@ -80,4 +94,40 @@ public class Face {
         return subList(49, 60);
     }
 
+    public Mat getMask() {
+        return mask;
+    }
+
+    private MatOfPoint getMatPoints(ArrayList<Position> positions) {
+        MatOfPoint matOfPoint = new MatOfPoint();
+        List<Point> points = new ArrayList<>();
+        for (Position position: positions)
+            points.add(new Point(position.getX(), position.getY()));
+        matOfPoint.fromList(points);
+        return matOfPoint;
+    }
+
+    private void setMask(ArrayList<Position> positions, Size size) {
+        Mat mask = new Mat();
+
+        Imgproc.fillConvexPoly(
+                mask,
+                getMatPoints(positions),
+                new Scalar(255, 255, 255)
+        );
+        Mat kernel = Imgproc.getStructuringElement(
+                Imgproc.MORPH_RECT,
+                new Size(40, 40)
+        );
+
+        Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_CLOSE, kernel);
+        Imgproc.GaussianBlur(mask, mask, new Size(15, 15), Core.BORDER_DEFAULT);
+
+        this.mask = mask;
+    }
+
+    public void setLipsMask(Size size) {
+        ArrayList<Position> positions = this.getMouth();
+        this.setMask(positions, size);
+    }
 }

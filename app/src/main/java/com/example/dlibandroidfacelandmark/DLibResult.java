@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 
@@ -46,11 +47,16 @@ public class DLibResult {
 
     private void detectFaces(Bitmap image) {
         faces.clear();
+        Size size = new Size(image.getWidth(), image.getHeight());
+
         for (Rect r: faceDetector.detectFaces(image)) {
             this.positions.clear();
+
             Face face = new Face(r);
             processLandMarks(image, face.getBoundingBox());
             face.setPositions(this.positions);
+            face.setLipsMask(size);
+
             faces.add(face);
             positions.clear();
         }
