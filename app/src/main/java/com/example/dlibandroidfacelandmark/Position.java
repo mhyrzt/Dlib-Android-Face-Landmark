@@ -8,7 +8,9 @@ public class Position {
         this.x = x;
         this.y = y;
     }
-
+    Position(int x, int y) {
+        this((double) x, (double) y);
+    }
     public double getX() {
         return x;
     }

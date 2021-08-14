@@ -97,27 +97,28 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void drawLips() {
         int color = FacePainter.getRGBA(vr, vg, vb, va);
-        for (Face face: this.faces) {
-            this.facePainter.drawMask(face, color);
-        }
+        for (Face face: this.faces)
+            facePainter.drawLipStick(face, color);
+
     }
 
     private void setChangeListener(SeekBar seekBar) {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateValue(seekBar, progress);
-            }
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                updateValue(seekBar);
+            }
         });
     }
 
-    private void updateValue(SeekBar seekBar, int progress) {
+    private void updateValue(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
         switch (seekBar.getId()) {
             case R.id.redSeekBar:
                 vr = progress;

@@ -82,7 +82,7 @@ void addNewPosition(JNIEnv* env, jobject thiz, long x, long y) {
 }
 
 void addNewPosition(JNIEnv* env, jobject thiz, dlib::point point) {
-    addNewPosition(env, thiz, point.x() / 2, point.y() / 2);
+    addNewPosition(env, thiz, point.x(), point.y());
 }
 
 void addFaceLandmarks(

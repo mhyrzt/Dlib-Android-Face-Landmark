@@ -2,6 +2,8 @@ package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
 
+import android.util.Log;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -15,10 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Face {
+    private static final String TAG = "Face";
     private Rect rect;
     private ArrayList<Position> positions;
     private int[] boundingBox;
     private Mat mask;
+    private ArrayList<Position> lipStick;
 
     Face(Rect rect) {
         setBoundingBox(rect);
@@ -93,7 +97,7 @@ public class Face {
     }
 
     public ArrayList<Position> getMouth() {
-        return subList(49, 60);
+        return subList(48, 60);
     }
 
     public Mat getMask() {
@@ -125,10 +129,27 @@ public class Face {
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_CLOSE, kernel);
         Imgproc.GaussianBlur(mask, mask, new Size(15, 15), Core.BORDER_DEFAULT);
 
-        this.mask = mask;
+        this.setLipStick(mask);
+    }
+
+    private boolean isMask(Mat mask, int r, int c) {
+        return mask.get(r, c)[0] == 255;
+    }
+
+    private void setLipStick(Mat mask) {
+        this.lipStick = new ArrayList<>();
+        for (int c = 0; c < (int) mask.size().width; c++)
+            for (int r = 0; r < (int) mask.size().height; r++)
+                if (isMask(mask, r, c))
+                    lipStick.add(new Position(c, r));
     }
 
     public void setLipsMask(Size size) {
         this.setMask(this.getMouth(), size);
     }
+
+    public ArrayList<Position> getLipStick() {
+        return this.lipStick;
+    }
+
 }

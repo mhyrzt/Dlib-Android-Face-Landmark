@@ -63,9 +63,15 @@ public class FacePainter {
 
     private void drawPosition(Position p) {
         drawCircle(
-                (float) p.getX() * 2,
-                (float) p.getY() * 2
+                (float) p.getX(),
+                (float) p.getY()
         );
+    }
+
+    private void drawPixel(Position p) {
+        int x = (int) p.getX();
+        int y = (int) p.getY();
+        this.canvas.drawCircle(x, y, 1, this.paint);
     }
 
     private void drawPositions(ArrayList<Position> positions) {
@@ -110,13 +116,13 @@ public class FacePainter {
 
         Path path = new Path();
         path.moveTo(
-                (float) positions.get(0).getX() * 2,
-                (float) positions.get(0).getY() * 2
+                (float) positions.get(0).getX(),
+                (float) positions.get(0).getY()
         );
         for (int i = 1; i < positions.size(); i++)
             path.lineTo(
-                    (float) positions.get(i).getX() * 2,
-                    (float) positions.get(i).getY() * 2
+                    (float) positions.get(i).getX(),
+                    (float) positions.get(i).getY()
             );
         path.close();
 
@@ -139,19 +145,10 @@ public class FacePainter {
         return r | g | b | a;
     }
 
-    public void drawMask(Face face, int rgba) {
-        Mat mask = face.getMask();
+    public void drawLipStick(Face face, int rgba) {
         this.paint.setColor(rgba);
-        int w = (int) mask.size().width;
-        int h = (int) mask.size().height;
-
-        for (int c = 0; c < w; c++) {
-            for (int r = 0; r < h; r++) {
-                if (mask.get(r, c)[0] == 255){
-                    this.canvas.drawCircle(c, r, 1, this.paint);
-                }
-            }
+        for (Position p: face.getLipStick()) {
+            this.drawPixel(p);
         }
-
     }
 }
