@@ -140,6 +140,18 @@ public class FacePainter {
     }
 
     public void drawMask(Face face, int rgba) {
+        Mat mask = face.getMask();
+        this.paint.setColor(rgba);
+        int w = (int) mask.size().width;
+        int h = (int) mask.size().height;
+
+        for (int c = 0; c < w; c++) {
+            for (int r = 0; r < h; r++) {
+                if (mask.get(r, c)[0] == 255){
+                    this.canvas.drawCircle(c, r, 1, this.paint);
+                }
+            }
+        }
 
     }
 }

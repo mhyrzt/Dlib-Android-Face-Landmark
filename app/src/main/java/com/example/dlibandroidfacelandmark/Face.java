@@ -1,5 +1,7 @@
 package com.example.dlibandroidfacelandmark;
 
+import static org.opencv.core.CvType.CV_8UC1;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -108,7 +110,7 @@ public class Face {
     }
 
     private void setMask(ArrayList<Position> positions, Size size) {
-        Mat mask = new Mat();
+        Mat mask = new Mat(size, CV_8UC1);
 
         Imgproc.fillConvexPoly(
                 mask,
@@ -127,7 +129,6 @@ public class Face {
     }
 
     public void setLipsMask(Size size) {
-        ArrayList<Position> positions = this.getMouth();
-        this.setMask(positions, size);
+        this.setMask(this.getMouth(), size);
     }
 }
