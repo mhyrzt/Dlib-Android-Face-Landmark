@@ -1,10 +1,14 @@
 package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC4;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
+import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;

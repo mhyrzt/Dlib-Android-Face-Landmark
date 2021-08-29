@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
+
+import org.opencv.core.Scalar;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,10 +99,9 @@ public class EditFaceActivity extends AppCompatActivity {
     }
 
     private void drawLips() {
-        int color = FacePainter.getRGBA(vr, vg, vb, va);
+        int color = Color.argb(va, vr, vg, vb);
         for (Face face: this.faces)
             facePainter.drawLipStick(face, color);
-
     }
 
     private void setChangeListener(SeekBar seekBar) {

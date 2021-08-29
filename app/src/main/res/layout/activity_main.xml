@@ -17,13 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    <ImageView
-        android:id="@+id/resultProcess"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_drawOnPictureSnapshot="true"
-        app:layout_drawOnPreview="true"
-        app:layout_drawOnVideoSnapshot="true"/>
     </com.otaliastudios.cameraview.CameraView>
 
     <Button
@@ -50,13 +43,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cameraChange" />
 
-    <Button
-        android:id="@+id/btnClear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CLEAR"
-        app:layout_constraintBaseline_toBaselineOf="@id/cameraChange"
-        app:layout_constraintEnd_toStartOf="@+id/btnCapture"
-        app:layout_constraintStart_toEndOf="@+id/cameraChange" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

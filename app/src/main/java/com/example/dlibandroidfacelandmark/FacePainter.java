@@ -137,14 +137,6 @@ public class FacePainter {
         this.canvas.drawColor(Color.BLACK);
     }
 
-    public static int getRGBA(int r, int g, int b, int a) {
-        a = (a & 0xff) << 24;
-        r = (r & 0xff) << 16;
-        g = (g & 0xff) << 8;
-        b = (b & 0xff);
-        return r | g | b | a;
-    }
-
     public void drawLipStick(Face face, int rgba) {
         this.paint.setColor(rgba);
         for (Position p: face.getLipStick()) {
