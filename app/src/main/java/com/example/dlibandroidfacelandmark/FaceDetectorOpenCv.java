@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class FaceDetectorOpenCv {
     private Context AppContext;
@@ -100,7 +99,7 @@ public class FaceDetectorOpenCv {
             cascadeDir.delete();
     }
 
-    private Mat bitmap2Mat(Bitmap image) {
+    public static Mat bitmap2Mat(Bitmap image) {
         Mat mat = new Mat();
         Bitmap bmp32 = image.copy(
                 Bitmap.Config.ARGB_8888,
@@ -109,6 +108,7 @@ public class FaceDetectorOpenCv {
         Utils.bitmapToMat(bmp32, mat);
         return mat;
     }
+
 
     public ArrayList<Rect> detectFaces(Bitmap image) {
         MatOfRect faceDetections = new MatOfRect();

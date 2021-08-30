@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
+
 import java.util.ArrayList;
 
 public class DLibResult {

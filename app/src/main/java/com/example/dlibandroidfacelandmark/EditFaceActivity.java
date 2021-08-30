@@ -1,27 +1,20 @@
 package com.example.dlibandroidfacelandmark;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Toast;
-
-import org.opencv.core.Scalar;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class EditFaceActivity extends AppCompatActivity {
@@ -73,8 +66,7 @@ public class EditFaceActivity extends AppCompatActivity {
     private void setupFacePaint() {
         this.image = GlobalVars.image;
         this.faces = GlobalVars.faces;
-        this.facePainter = new FacePainter();
-        facePainter.setBitmap(this.image);
+        this.facePainter = new FacePainter(this.image);
         updateImageView();
     }
 
@@ -107,15 +99,15 @@ public class EditFaceActivity extends AppCompatActivity {
     private void setChangeListener(SeekBar seekBar) {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                updateValue(seekBar);
+            }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                updateValue(seekBar);
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 

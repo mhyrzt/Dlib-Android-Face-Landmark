@@ -1,14 +1,8 @@
 package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
-import static org.opencv.core.CvType.CV_8UC4;
 
-import android.graphics.Bitmap;
-import android.util.Log;
-
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -31,11 +25,6 @@ public class Face {
     Face(Rect rect) {
         setBoundingBox(rect);
         this.positions = new ArrayList<>();
-    }
-
-    Face(Rect rect, Mat mask) {
-        this(rect);
-        this.mask = mask;
     }
 
     private void setBoundingBox(Rect r) {
@@ -132,8 +121,14 @@ public class Face {
 
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_CLOSE, kernel);
         Imgproc.GaussianBlur(mask, mask, new Size(15, 15), Core.BORDER_DEFAULT);
+        Imgproc.Canny(mask, mask, 100, 200);
 
-        this.setLipStick(mask);
+        setMask(mask);
+        setLipStick(mask);
+    }
+
+    private void setMask(Mat mask) {
+        this.mask = mask;
     }
 
     private boolean isMask(Mat mask, int r, int c) {
