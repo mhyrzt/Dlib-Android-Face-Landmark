@@ -4,7 +4,6 @@ import static org.opencv.core.CvType.CV_8UC1;
 
 import android.util.Log;
 
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Face {
-    private static final String TAG = "Face";
     private Rect rect;
     private ArrayList<Position> positions;
     private int[] boundingBox;
@@ -133,13 +131,12 @@ public class Face {
         this.mask = mask;
     }
 
-    private boolean isValidPoint(Point p) {
-        return  p.x > 0 &&
-                p.y > 0;
+    private boolean isValidPoint(Point p, int r, int c) {
+        return  p.x > 0 && p.x < c - 1 &&
+                p.y > 0 && p.y < r - 1;
     }
 
-    private void setLipStick(Mat mask) {
-        this.lipStick = new ArrayList<>();
+    private List<MatOfPoint> getContours(Mat mask) {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(
@@ -149,11 +146,17 @@ public class Face {
                 Imgproc.RETR_TREE,
                 Imgproc.CHAIN_APPROX_NONE
         );
-        for (Point p: contours.get(0).toArray()) {
-            if (isValidPoint(p)) {
+        return contours;
+    }
+    private void setLipStick(Mat mask) {
+        this.lipStick = new ArrayList<>();
+        List<MatOfPoint> contours = getContours(mask);
+        int r = mask.rows();
+        int c = mask.cols();
+
+        for (Point p: contours.get(0).toArray())
+            if (isValidPoint(p, r, c))
                 this.lipStick.add(new Position(p.x, p.y));
-            }
-        }
     }
 
     public void setLipsMask(Size size) {

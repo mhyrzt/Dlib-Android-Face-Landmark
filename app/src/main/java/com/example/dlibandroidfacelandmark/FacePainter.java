@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -65,13 +64,12 @@ public class FacePainter {
         drawPositions(face.getPositions());
     }
 
-    public FacePainter drawFacesLandMarks(ArrayList<Face> faces) {
+    public void drawFacesLandMarks(ArrayList<Face> faces) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(this.radius);
         this.paint.setColor(Color.RED);
         for (Face face: faces)
             drawPositions(face);
-        return this;
     }
 
     private void drawRectangle(Face face) {
@@ -81,14 +79,13 @@ public class FacePainter {
         );
     }
 
-    public FacePainter drawFacesBoundingBox(ArrayList<Face> faces) {
+    public void drawFacesBoundingBox(ArrayList<Face> faces) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(this.radius);
         this.paint.setColor(Color.GREEN);
 
         for (Face face: faces)
             this.drawRectangle(face);
-        return this;
     }
 
     public void drawPolygon(ArrayList<Position> positions, int color) {

@@ -1,20 +1,27 @@
 package com.example.dlibandroidfacelandmark;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class EditFaceActivity extends AppCompatActivity {
@@ -27,8 +34,11 @@ public class EditFaceActivity extends AppCompatActivity {
     private ArrayList<Face> faces;
 
     private ImageView imageView;
-    private CheckBox drawLandmarksCheckbox; private boolean drawLandmarks = false;
-    private CheckBox drawBoundingBoxCheckBox; private boolean boundingBox = false;
+    private CheckBox drawLandmarksCheckbox;
+    private boolean drawLandmarks = false;
+
+    private CheckBox drawBoundingBoxCheckBox;
+    private boolean boundingBox = false;
     private Button saveBtn;
 
     @Override
@@ -92,8 +102,13 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void drawLips() {
         int color = Color.argb(va, vr, vg, vb);
-        for (Face face: this.faces)
-            facePainter.drawLipStick(face, color);
+        try {
+            for (Face face: this.faces)
+                facePainter.drawLipStick(face, color);
+        } catch (Exception e) {
+            makeShortToast("TRY AGAIN!");
+            finish();
+        }
     }
 
     private void setChangeListener(SeekBar seekBar) {
@@ -152,12 +167,58 @@ public class EditFaceActivity extends AppCompatActivity {
 
     private void setupSaveButton() {
         this.saveBtn.setOnClickListener(v -> {
-            saveImage();
+            try {
+                saveImage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
+    private File makePath() {
+        String storePath = Environment
+                .getExternalStorageDirectory()
+                .getAbsolutePath() + File.separator + "dlibApp";
 
-    private void saveImage() {
+        File appDir = new File(storePath);
+        if (!appDir.exists())
+            appDir.mkdir();
+
+        return appDir;
+    }
+
+    private File makeFile(File appDir) {
+        String fileName = "dlibApp_result_" + System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        return file;
+    }
+
+    private boolean compressBitmap(File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        boolean success = this.facePainter
+                .getBitmap()
+                .compress(
+                        Bitmap.CompressFormat.JPEG,
+                        60,
+                        fos
+                );
+        fos.flush();
+        fos.close();
+        return success;
+    }
+
+    private void makeShortToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveImage() throws IOException {
         requestStoragePermission();
+
+        File appDir = makePath();
+        File file = makeFile(appDir);
+        if (compressBitmap(file))
+            makeShortToast("Image Saved Successfully!");
+        else
+            makeShortToast("ERROR!");
     }
 
     private boolean hasWritePermission() {
@@ -192,8 +253,8 @@ public class EditFaceActivity extends AppCompatActivity {
             if (
                     grantResults.length > 0 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {}
-            else {}
+            ) { }
+            else { }
         }
     }
 }

@@ -3,7 +3,6 @@ package com.example.dlibandroidfacelandmark;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -18,7 +17,6 @@ public class DLibResult {
 
     private ArrayList<Position> positions;
     private FaceDetectorOpenCv faceDetector;
-    private static final String TAG = "DLibResult";
     private ArrayList<Face> faces;
 
     DLibResult(Context AppContext, String fileName) {
