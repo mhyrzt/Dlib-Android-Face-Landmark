@@ -3,6 +3,7 @@ package com.example.dlibandroidfacelandmark;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.opencv.core.Rect;
 import org.opencv.core.Size;

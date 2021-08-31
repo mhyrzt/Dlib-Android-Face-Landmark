@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -93,7 +94,6 @@ public class FacePainter {
     public void drawPolygon(ArrayList<Position> positions, int color) {
         this.paint.setColor(color);
         this.paint.setStyle(Paint.Style.FILL);
-
         Path path = new Path();
         path.moveTo(
                 (float) positions.get(0).getX(),

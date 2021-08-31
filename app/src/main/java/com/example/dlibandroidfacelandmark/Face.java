@@ -2,6 +2,9 @@ package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
 
+import android.util.Log;
+
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -62,7 +65,7 @@ public class Face {
     }
 
     private ArrayList<Position> subList(int start, int end) {
-        return new ArrayList<Position>(this.positions.subList(start, end));
+        return new ArrayList<>(this.positions.subList(start, end));
     }
 
     public ArrayList<Position> getChin() {
@@ -121,7 +124,6 @@ public class Face {
 
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_CLOSE, kernel);
         Imgproc.GaussianBlur(mask, mask, new Size(15, 15), Core.BORDER_DEFAULT);
-        Imgproc.Canny(mask, mask, 100, 200);
 
         setMask(mask);
         setLipStick(mask);
@@ -131,16 +133,27 @@ public class Face {
         this.mask = mask;
     }
 
-    private boolean isMask(Mat mask, int r, int c) {
-        return mask.get(r, c)[0] == 255;
+    private boolean isValidPoint(Point p) {
+        return  p.x > 0 &&
+                p.y > 0;
     }
 
     private void setLipStick(Mat mask) {
         this.lipStick = new ArrayList<>();
-        for (int c = 0; c < (int) mask.size().width; c++)
-            for (int r = 0; r < (int) mask.size().height; r++)
-                if (isMask(mask, r, c))
-                    lipStick.add(new Position(c, r));
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(
+                mask,
+                contours,
+                hierarchy,
+                Imgproc.RETR_TREE,
+                Imgproc.CHAIN_APPROX_NONE
+        );
+        for (Point p: contours.get(0).toArray()) {
+            if (isValidPoint(p)) {
+                this.lipStick.add(new Position(p.x, p.y));
+            }
+        }
     }
 
     public void setLipsMask(Size size) {
