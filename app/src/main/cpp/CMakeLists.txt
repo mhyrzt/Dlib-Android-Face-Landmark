@@ -10,8 +10,8 @@ find_library(
 )
 
 find_library(
-              log-lib
-              log
+        log-lib
+        log
 )
 
 add_library(

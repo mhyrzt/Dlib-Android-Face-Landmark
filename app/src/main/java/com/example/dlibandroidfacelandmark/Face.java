@@ -148,6 +148,7 @@ public class Face {
         );
         return contours;
     }
+    
     private void setLipStick(Mat mask) {
         this.lipStick = new ArrayList<>();
         List<MatOfPoint> contours = getContours(mask);

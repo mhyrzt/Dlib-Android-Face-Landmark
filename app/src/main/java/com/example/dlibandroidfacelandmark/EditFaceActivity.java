@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class EditFaceActivity extends AppCompatActivity {
     private SeekBar r, g, b, a;
     private int vr, vg, vb, va;
-    private static final String TAG = "EditFaceActivity";
 
     private FacePainter facePainter;
     private Bitmap image;
@@ -115,7 +114,7 @@ public class EditFaceActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateValue(seekBar);
+                updateValue(seekBar, progress);
             }
 
             @Override
@@ -126,8 +125,7 @@ public class EditFaceActivity extends AppCompatActivity {
         });
     }
 
-    private void updateValue(SeekBar seekBar) {
-        int progress = seekBar.getProgress();
+    private void updateValue(SeekBar seekBar, int progress) {
         switch (seekBar.getId()) {
             case R.id.redSeekBar:
                 vr = progress;
