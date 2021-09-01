@@ -11,5 +11,3 @@ It utilizes following libraries for making a face landmark detection system:
 - [CamerView](https://github.com/natario1/CameraView): for capturing image from both mobile cameras (front & back) and processing frames in real time.
 
 - [OpenCv](https://opencv.org/android/): OpenCv was used for due to the slow speed of ```dlib::frontal_face_detector()``` .
-
-![RESULT](./RESULT.jpeg)
