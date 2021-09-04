@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
+import org.opencv.core.Scalar;
+
 import java.util.ArrayList;
 
 public class FacePainter {

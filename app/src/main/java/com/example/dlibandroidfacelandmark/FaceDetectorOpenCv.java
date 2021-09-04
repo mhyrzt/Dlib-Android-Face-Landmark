@@ -7,9 +7,12 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
@@ -107,6 +110,14 @@ public class FaceDetectorOpenCv {
         );
         Utils.bitmapToMat(bmp32, mat);
         return mat;
+    }
+
+    public static Bitmap mat2Bitmap(Mat mat) {
+        Mat tmp = new Mat(mat.size(), CvType.CV_8U, new Scalar(4));
+        Imgproc.cvtColor(mat, tmp, Imgproc.COLOR_GRAY2RGBA);
+        Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat, bmp);
+        return bmp;
     }
 
 

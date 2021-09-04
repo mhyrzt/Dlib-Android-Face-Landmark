@@ -2,6 +2,9 @@ package com.example.dlibandroidfacelandmark;
 
 import static org.opencv.core.CvType.CV_8UC1;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Path;
 import android.util.Log;
 
 import org.opencv.core.Core;
@@ -14,7 +17,9 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Face {
     private Rect rect;
@@ -108,12 +113,12 @@ public class Face {
     }
 
     private void setMask(ArrayList<Position> positions, Size size) {
-        Mat mask = new Mat(size, CV_8UC1);
+        Mat mask = new Mat(size, CV_8UC1, Scalar.all(0));
 
         Imgproc.fillConvexPoly(
                 mask,
                 getMatPoints(positions),
-                new Scalar(255, 255, 255)
+                new Scalar(255)
         );
         Mat kernel = Imgproc.getStructuringElement(
                 Imgproc.MORPH_RECT,
@@ -144,20 +149,26 @@ public class Face {
                 contours,
                 hierarchy,
                 Imgproc.RETR_TREE,
-                Imgproc.CHAIN_APPROX_NONE
+                Imgproc.CHAIN_APPROX_SIMPLE
         );
         return contours;
     }
-    
+
+    private void addLipStickPoint(Point p, Mat mask) {
+        addLipStickPoint(p, mask.rows(), mask.cols());
+    }
+
+    private void addLipStickPoint(Point p, int r, int c) {
+        if (isValidPoint(p, r, c))
+            this.lipStick.add(new Position(p.x, p.y));
+    }
+
     private void setLipStick(Mat mask) {
         this.lipStick = new ArrayList<>();
         List<MatOfPoint> contours = getContours(mask);
-        int r = mask.rows();
-        int c = mask.cols();
-
-        for (Point p: contours.get(0).toArray())
-            if (isValidPoint(p, r, c))
-                this.lipStick.add(new Position(p.x, p.y));
+        for (Point p: contours.get(0).toArray()) {
+            addLipStickPoint(p, mask);
+        }
     }
 
     public void setLipsMask(Size size) {
